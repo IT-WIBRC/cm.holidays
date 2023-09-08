@@ -30,9 +30,11 @@ components:
           description: user email
         createdAt:
           type: string
+          format: date-time
           description: user arriving date
         updatedAt:
           type: string
+          format: date-time
           description: user updating date
         role:
           $ref: '#/components/schemas/RoleDTO'
@@ -77,12 +79,15 @@ components:
           description: holiday request description
         startingDate:
           type: string
+          format: date-time
           description: user arriving date
         endingDate:
           type: string
+          format: date-time
           description: user updating date
         returningDate:
           type: string
+          format: date-time
           description: user updating date
         type:
           $ref: '#/components/schemas/HOLIDAY_TYPE'

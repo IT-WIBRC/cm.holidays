@@ -1,6 +1,5 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
-import type { RoleDTO } from "./dto/employee";
-import {ROLE} from "./dto/employee";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { RoleDTO, USER_ROLE } from "./services";
 
 @Entity({
     name: "t_role",
@@ -17,10 +16,10 @@ export class Role implements RoleDTO {
 
     @Column({
         type: "enum",
-        enum: ROLE,
+        enum: USER_ROLE,
         nullable: false,
     })
-    declare type: ROLE;
+    declare type: USER_ROLE;
 
     @Column({
         type: "varchar",

@@ -9,7 +9,7 @@ import {
     JoinColumn,
 } from "typeorm";
 import { Auth } from "../utils/auth";
-import { EmployeeDTO } from "./dto/employee";
+import { EmployeeDTO } from "./services";
 import {Role} from "./Role";
 import { HolidayRequest } from "./HolidayRequest";
 @Entity({
@@ -59,10 +59,10 @@ export class Employee implements EmployeeDTO {
     declare email: string;
 
     @CreateDateColumn({ name: "created_at" })
-    declare createdAt?: Date;
+    declare createdAt?: string;
 
     @UpdateDateColumn({ name: "updated_at" })
-    declare updatedAt?: Date;
+    declare updatedAt?: string;
 
     @OneToOne(() => Role)
     @JoinColumn()

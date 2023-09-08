@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Employee } from "./Employee";
-import { HOLIDAY_TYPE, HolidayRequestDTO } from "./dto/holidayRequest";
+import { HOLIDAY_TYPE, HolidayRequestDTO } from "./services";
 
 @Entity({
     name: "t_holidayRequest",
@@ -19,19 +19,19 @@ export class HolidayRequest implements HolidayRequestDTO {
         type: "date",
         nullable: false,
     })
-    declare startingDate: Date;
+    declare startingDate: string;
 
     @Column({
         type: "date",
         nullable: false,
     })
-    declare endingDate: Date;
+    declare endingDate: string;
 
     @Column({
         type: "date",
         nullable: false,
     })
-    declare returningDate: Date;
+    declare returningDate: string;
 
     @Column({
         type: "varchar",

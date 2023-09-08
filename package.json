@@ -4,7 +4,7 @@
   "description": "Allow person in the company to ask for a holiday that the company allow. Also to the responsible to validate this or refuse.",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --exec ts-node ./src/index.ts",
+    "dev": "npm run openapi-generate & nodemon --exec ts-node ./src/index.ts",
     "migration:generate": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:generate ./src/migrations/default",
     "migration:run": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:run",
     "openapi-generate": "openapi --input ./specs/holiday.yaml --output ./src/entities/services --client axios"
