@@ -1,0 +1,114 @@
+openapi: 3.0.3
+info:
+  title: Holiday
+  description: REST API endpoints for managing Holiday
+  version: 0.0.0-SNAPSHOT
+servers:
+  - url: 'https'
+paths:
+  
+components:
+  schemas:
+    EmployeeDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: identifier the user id
+        firstname:
+          type: string
+          description: user firstname
+        lastName:
+          type: string
+          description: user lastname
+        password:
+          type: string
+          description: user password
+        email:
+          type: string
+          description: user email
+        createdAt:
+          type: string
+          description: user arriving date
+        updatedAt:
+          type: string
+          description: user updating date
+        role:
+          $ref: '#/components/schemas/RoleDTO'
+        holidays:
+          type: array
+          description: holidays request for a user
+          items:
+            $ref: "#/components/schemas/HolidayRequestDTO"
+    RoleDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: identifier the role
+        type:
+          $ref: '#/components/schemas/USER_ROLE'
+        description:
+          type: string
+          description: role description
+    DepartmentDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: identifier the department
+        type:
+          $ref: '#/components/schemas/DEPARTMENT'
+        description:
+          type: string
+          description: department description
+    HolidayRequestDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: identifier the holiday id
+        description:
+          type: string
+          description: holiday request description
+        startingDate:
+          type: string
+          description: user arriving date
+        endingDate:
+          type: string
+          description: user updating date
+        returningDate:
+          type: string
+          description: user updating date
+        type:
+          $ref: '#/components/schemas/HOLIDAY_TYPE'
+        employee:
+          type: object
+          items:
+            $ref: '#/components/schemas/EmployeeDTO'
+    USER_ROLE:
+      type: string
+      enum:
+        - ADMIN
+        - EMPLOYEE
+        - HUMAN_RESOURCE
+    DEPARTMENT:
+      type: string
+      enum:
+        - FRONT_END
+        - BACK_END
+        - PROJECT_MANAGEMENT
+        - INFRASTRUCTURE
+    HOLIDAY_TYPE:
+      type: string
+      enum:
+        - ANNUAL
+        - MATERNITY
+        - ADVENTURE
+        - CYCLING
+        - FAMILY
+        - CITY_BREAKS
