@@ -1,4 +1,4 @@
-import { components } from "./Dto";
+import { components } from "./DTO";
 
 //Employee
 type EmployeeType = components["schemas"]["EmployeeDTO"];

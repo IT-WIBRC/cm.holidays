@@ -1,4 +1,4 @@
 /node_modules
-/src/entities/services/
+/src/entities/types/DTO/
 .idea
 .env

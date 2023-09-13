@@ -9,7 +9,7 @@
     "build": "npm run prerequisite && rimraf ./dist | npx tsc",
     "migration:generate": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:generate ./src/migrations",
     "migration:run": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:run",
-    "openapi-generate": "rimraf ./src/entities/types/Dto.ts & openapi-typescript ./specs/holiday.yaml --output ./src/entities/types/Dto.ts"
+    "openapi-generate": "rimraf ./src/entities/types/DTO/index.ts & openapi-typescript ./specs/holiday.yaml --output ./src/entities/types/DTO/index.ts"
   },
   "repository": {
     "type": "git",
