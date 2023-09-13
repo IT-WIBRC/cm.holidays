@@ -5,13 +5,14 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     BeforeInsert,
-    BeforeUpdate, OneToOne, OneToMany,
+    BeforeUpdate, OneToMany,
     JoinColumn,
 } from "typeorm";
 import { Auth } from "../utils/auth";
-import { EmployeeDTO } from "./services";
-import {Role} from "./Role";
+import { EmployeeDTO } from "./types";
 import { HolidayRequest } from "./HolidayRequest";
+import {PostEmployee} from "./PostEmployee";
+import {EmployeeRole} from "./EmployeeRole";
 @Entity({
     name: "t_employee",
 })
@@ -64,10 +65,14 @@ export class Employee implements EmployeeDTO {
     @UpdateDateColumn({ name: "updated_at" })
     declare updatedAt?: string;
 
-    @OneToOne(() => Role)
-    @JoinColumn()
-    declare role: Role
+    @OneToMany(() => EmployeeRole, (employeeRole) => employeeRole.roles)
+    @JoinColumn( { name: "roleId" })
+    declare roles: EmployeeRole[]
 
     @OneToMany(() => HolidayRequest, (holidayRequest) => holidayRequest.employee)
     declare holidays: HolidayRequest[]
+
+    @OneToMany(() => PostEmployee, (postEmployee) => postEmployee.employee)
+    @JoinColumn({ name: "postId" })
+    declare posts: PostEmployee[]
 }

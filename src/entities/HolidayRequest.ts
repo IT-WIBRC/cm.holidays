@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn} from "typeorm";
 import { Employee } from "./Employee";
-import { HOLIDAY_TYPE, HolidayRequestDTO } from "./services";
+import { HolidayRequestDTO } from "./types";
+import {HolidayType} from "./HolidayType";
 
 @Entity({
     name: "t_holidayRequest",
@@ -39,13 +40,9 @@ export class HolidayRequest implements HolidayRequestDTO {
     })
     declare description: string;
 
-    @Column({
-        type: "enum",
-        enum: HOLIDAY_TYPE,
-        nullable: false,
-    })
-    declare type: HOLIDAY_TYPE;
-
     @ManyToOne(() => Employee, (employee) => employee.holidays)
     declare employee: Employee;
+
+    @OneToOne(() => HolidayType)
+    declare holidayType: HolidayType;
 }

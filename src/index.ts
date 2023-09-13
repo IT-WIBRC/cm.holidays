@@ -1,13 +1,19 @@
 import express from 'express';
 import { AppDataSource } from './data-source';
 import { userRouter } from "./routes";
+import helmet from "helmet";
+import compression from "compression"
 
 const initApp = async (): Promise<unknown> => {
     try {
         await AppDataSource.initialize();
 
         const app = express();
-        app.use(express.json())
+        app
+            .use(compression())
+            .use(helmet())
+            .use(express.json());
+
         app.get('/', (req, res) => {
             return res.json('Established connection!');
         })
