@@ -1,15 +1,30 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { SettingDTO } from "./types";
 
 @Entity({
-    name: "t_settings",
+  name: "t_setting"
 })
-export class Setting {
+export class Setting implements SettingDTO {
     @PrimaryGeneratedColumn("uuid")
     @Column({
-        primary: true,
-        type: "uuid",
-        nullable: false,
-        unique: true,
+      primary: true,
+      type: "uuid",
+      nullable: false,
+      unique: true
     })
-    declare id: string;
+  declare id: string;
+
+    @Column({
+      type: "character",
+      nullable: false,
+      unique: true
+    })
+    declare defaultEmailNotification: string;
+
+    @Column({
+      type: "character",
+      nullable: true,
+      unique: true
+    })
+    declare customEmailNotification: string;
 }

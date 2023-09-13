@@ -1,4 +1,4 @@
-import { userRouter } from "./user";
+import { personRouter } from "./person";
 
 
-export { userRouter };
+export { personRouter };

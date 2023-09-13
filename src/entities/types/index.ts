@@ -27,9 +27,12 @@ enum USER_ROLE {
     HUMAN_RESOURCE = "HUMAN_RESOURCE"
 }
 
+// Setting
+type Setting = components["schemas"]["SettingDTO"];
+interface SettingDTO extends Setting {}
 
 // EXPORTS TYPE
-export { EmployeeDTO, HolidayRequestDTO, HolidayTypeDTO, ServiceDTO, PostDTO, RoleDTO }
+export { EmployeeDTO, HolidayRequestDTO, HolidayTypeDTO, ServiceDTO, PostDTO, RoleDTO, SettingDTO };
 
 // EXPORT ENUM
-export { USER_ROLE }
+export { USER_ROLE };

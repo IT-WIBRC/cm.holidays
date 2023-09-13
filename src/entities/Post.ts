@@ -1,43 +1,44 @@
 import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    JoinColumn,
-    OneToMany,
-    OneToOne,
-    PrimaryGeneratedColumn,
-    UpdateDateColumn
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
 } from "typeorm";
-import {PostDTO} from "./types";
-import {Service} from "./Service";
-import {PostEmployee} from "./PostEmployee";
+import { PostDTO } from "./types";
+import { Service } from "./Service";
+import { PostEmployee } from "./PostEmployee";
 
 @Entity({
-    name: "t_post",
+  name: "t_post"
 })
 export class Post implements PostDTO {
     @PrimaryGeneratedColumn("uuid")
     @Column({
-        primary: true,
-        type: "uuid",
-        nullable: false,
-        unique: true,
+      primary: true,
+      type: "uuid",
+      nullable: false,
+      unique: true
     })
-    declare id: string;
+  declare id: string;
 
     @Column({
-        type: "varchar",
-        nullable: false,
+      type: "varchar",
+      nullable: false
     })
     declare name: string;
 
     @Column({
-        type: "varchar",
-        nullable: true,
+      type: "varchar",
+      nullable: true
     })
     declare description?: string;
 
-    @Column({ type: "boolean", nullable: false })
+    @Column({ type: "boolean",
+      nullable: false })
     declare isActive: boolean;
 
     @CreateDateColumn({ name: "created_at" })
@@ -47,6 +48,7 @@ export class Post implements PostDTO {
     declare updatedAt?: string;
 
     @OneToOne(() => Service)
+    @JoinColumn()
     declare service: Service;
 
     @OneToMany(() => PostEmployee, (postEmployee) => postEmployee.posts)

@@ -1,42 +1,42 @@
-import {Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Employee } from "./Employee";
 import { HolidayRequestDTO } from "./types";
-import {HolidayType} from "./HolidayType";
+import { HolidayType } from "./HolidayType";
 
 @Entity({
-    name: "t_holidayRequest",
+  name: "t_holidayRequest"
 })
 export class HolidayRequest implements HolidayRequestDTO {
     @PrimaryGeneratedColumn("uuid")
     @Column({
-        primary: true,
-        type: "uuid",
-        nullable: false,
-        unique: true,
+      primary: true,
+      type: "uuid",
+      nullable: false,
+      unique: true
     })
-    declare id: string;
+  declare id: string;
 
     @Column({
-        type: "date",
-        nullable: false,
+      type: "date",
+      nullable: false
     })
     declare startingDate: string;
 
     @Column({
-        type: "date",
-        nullable: false,
+      type: "date",
+      nullable: false
     })
     declare endingDate: string;
 
     @Column({
-        type: "date",
-        nullable: false,
+      type: "date",
+      nullable: false
     })
     declare returningDate: string;
 
     @Column({
-        type: "varchar",
-        nullable: false,
+      type: "varchar",
+      nullable: false
     })
     declare description: string;
 
@@ -44,5 +44,6 @@ export class HolidayRequest implements HolidayRequestDTO {
     declare employee: Employee;
 
     @OneToOne(() => HolidayType)
+    @JoinColumn()
     declare holidayType: HolidayType;
 }

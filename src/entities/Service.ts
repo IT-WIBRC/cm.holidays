@@ -1,33 +1,34 @@
-import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ServiceDTO } from "./types";
-import {Post} from "./Post";
+import { Post } from "./Post";
 
 @Entity({
-    name: "t_service",
+  name: "t_service"
 })
 export class Service implements ServiceDTO {
     @PrimaryGeneratedColumn("uuid")
     @Column({
-        primary: true,
-        type: "uuid",
-        nullable: false,
-        unique: true,
+      primary: true,
+      type: "uuid",
+      nullable: false,
+      unique: true
     })
-    declare id: string;
+  declare id: string;
 
     @Column({
-        type: "varchar",
-        nullable: false,
+      type: "varchar",
+      nullable: false
     })
     declare name: string;
 
     @Column({
-        type: "varchar",
-        nullable: true,
+      type: "varchar",
+      nullable: true
     })
     declare description?: string;
 
-    @Column({ type: "boolean", nullable: false })
+    @Column({ type: "boolean",
+      nullable: false })
     declare isActive: boolean;
 
     @CreateDateColumn({ name: "created_at" })
