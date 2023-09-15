@@ -1,17 +1,21 @@
 import { compare, hash } from "bcrypt";
 import { TOKEN_ERROR, TokenPayload } from "./types";
-import { sign, verify } from "jsonwebtoken";
+import { Secret, sign, verify } from "jsonwebtoken";
 import { EmployeeDTO } from "../entities/types";
+import { DEFAULT_TOKEN_KEY, TOKEN_ENCRYPT_ALGO } from "./constants";
 
 type VerifyToken = TokenPayload | string;
 export class Auth {
   private static SALBOUND: number = 10;
-  private static TOKEN_KEY: string = process.env.TOKEN_KEY ?? "12345";
+  private static TOKEN_KEY: Secret = process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY;
   static async makeHash(password: string): Promise<string> {
     return await hash(password, this.SALBOUND);
   }
 
-  static async comparePassword(plainTextPassword: string, passwordHashed: string): Promise<boolean> {
+  static async comparePassword(
+    plainTextPassword: string,
+    passwordHashed: string
+  ): Promise<boolean> {
     return compare(plainTextPassword, passwordHashed);
   }
 
@@ -23,20 +27,18 @@ export class Auth {
       email,
       roles
     } = employee;
-    return JSON.stringify(
-      sign({
-        id,
-        infos: {
-          email,
-          firstname,
-          lastName,
-          roles
-        }
-      } as TokenPayload, this.TOKEN_KEY, {
-        algorithm: "HS512",
-        expiresIn: time
-      })
-    );
+    return sign({
+      id,
+      infos: {
+        email,
+        firstname,
+        lastName,
+        roles: roles ? roles : []
+      }
+    } as TokenPayload, this.TOKEN_KEY, {
+      algorithm: TOKEN_ENCRYPT_ALGO,
+      expiresIn: time
+    });
   }
 
   static parseToken (token: string): VerifyToken  {

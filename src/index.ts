@@ -1,12 +1,13 @@
 import express, { NextFunction, Request, Response } from "express";
 import { AppDataSource } from "./data-source";
-import { personRouter } from "./routes";
+import { personRouter, serviceRouter } from "./routes";
 import helmet from "helmet";
 import compression from "compression";
 import cors from "cors";
 import { Security } from "./middlewares/security";
 import { NotFound, ErrorHandler } from "./middlewares/errors/Api";
 import { initEnv } from "../configEnv";
+import { postRouter } from "./routes/post";
 
 initEnv();
 
@@ -35,6 +36,8 @@ const initApp = async (): Promise<unknown> => {
     });
 
     app.use("/user", personRouter);
+    app.use("/service", serviceRouter);
+    app.use("/post", postRouter);
 
     app.use((request: Request, response: Response, next: NextFunction) =>
       next(new NotFound(`Requested path ${request.path} not found`))
@@ -47,7 +50,6 @@ const initApp = async (): Promise<unknown> => {
     console.error(error);
   }
 };
-
 
 (async (): Promise<void> => {
   await initApp();

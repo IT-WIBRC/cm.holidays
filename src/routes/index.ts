@@ -1,4 +1,5 @@
 import { personRouter } from "./person";
+import { serviceRouter } from "./service";
 
 
-export { personRouter };
+export { personRouter, serviceRouter };

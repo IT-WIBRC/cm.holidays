@@ -23,17 +23,17 @@ const passwordValidation = checkSchema({
     },
     trim: true,
     isLength: {
-      errorMessage: "Password must have at least 8 character and less than 21",
+      errorMessage: "Password must have at least 6 character and less than 11",
       options: {
-        min: 8,
-        max: 20
+        min: 6,
+        max: 10
       }
     },
     matches: {
       errorMessage:
         "Password must have at least one uppercase, lowercase, digit and special character",
       options: new RegExp(
-        "(^[\w.-@]{8,20})",
+        "(^[\w.-@]{8,10})",
         "g"
       )
     }
@@ -54,14 +54,14 @@ const firstnameValidation = checkSchema({
 });
 
 const lastnameValidation = checkSchema({
-  lastname: {
+  lastName: {
     exists: {
       errorMessage: "LastName is required"
     },
     trim: true,
     isLength: {
       errorMessage: "LastName must have length less than 2",
-      options: { max: 2 }
+      options: { min: 2 }
     }
   }
 });
@@ -81,6 +81,76 @@ const assertRequiredLoginFieldsAreNotEmpty = checkSchema({
   }
 });
 
-export { passwordValidation, emailValidation, firstnameValidation, lastnameValidation };
+const nameSchema = {
+  name: {
+    notEmpty: {
+      options: {
+        ignore_whitespace: true
+      },
+      errorMessage: "Name field is empty"
+    },
+    exists: {
+      errorMessage: "Name is required"
+    },
+    trim: true,
+    isLength: {
+      errorMessage: "Name must have length more than 2",
+      options: { min: 2 }
+    }
+  }
+};
 
-export { assertRequiredLoginFieldsAreNotEmpty };
+const nameValidation = checkSchema(nameSchema);
+
+const descriptionValidation = checkSchema({
+  description: {
+    exists: {
+      errorMessage: "Description is required"
+    },
+    notEmpty: {
+      options: {
+        ignore_whitespace: false
+      },
+      errorMessage: "Description field is empty"
+    },
+    trim: true,
+    isLength: {
+      errorMessage: "Description must have length more than 10",
+      options: { min: 10 }
+    }
+  }
+});
+
+const assertPostCreation = checkSchema({
+  ...nameSchema,
+  service: {
+    notEmpty: {
+      options: {
+        ignore_whitespace: false
+      },
+      errorMessage: "Service field is empty"
+    },
+    exists: {
+      errorMessage: "Malformed request (service doesn't exist for this post)"
+    }
+  },
+  "service.id": {
+    exists: {
+      errorMessage: "The id field is empty"
+    },
+    isUUID: {
+      errorMessage: "Wrong id is not an uuid"
+    }
+  }
+});
+
+export {
+  passwordValidation,
+  emailValidation,
+  firstnameValidation,
+  lastnameValidation,
+  nameValidation,
+  descriptionValidation
+};
+
+export { assertRequiredLoginFieldsAreNotEmpty, assertPostCreation };

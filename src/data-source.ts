@@ -5,7 +5,6 @@ import { initEnv } from "../configEnv";
 initEnv();
 
 const port = process.env.DB_PORT as number | undefined;
-
 export const AppDataSource = new DataSource({
   type: "postgres",
   host: process.env.DB_HOST,

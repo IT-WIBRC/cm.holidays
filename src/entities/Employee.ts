@@ -4,16 +4,16 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
+  JoinColumn, ManyToMany,
   OneToMany, OneToOne,
   PrimaryGeneratedColumn, UpdateDateColumn
 } from "typeorm";
 import { Auth } from "../utils/auth";
 import { EmployeeDTO } from "./types";
 import { HolidayRequest } from "./HolidayRequest";
-import { PostEmployee } from "./PostEmployee";
-import { EmployeeRole } from "./EmployeeRole";
 import { Setting } from "./Setting";
+import { Role } from "./Role";
+import { Post } from "./Post";
 @Entity({
   name: "t_employee"
 })
@@ -66,16 +66,27 @@ export class Employee implements EmployeeDTO {
     @UpdateDateColumn({ name: "updated_at" })
     declare updatedAt?: string;
 
-    @OneToMany(() => EmployeeRole, (employeeRole) => employeeRole.roles)
-    @JoinColumn({ name: "roleId" })
-    declare roles: EmployeeRole[];
+    @ManyToMany(() => Role, (role) => role.employees,{
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+      cascade: true
+    })
+    declare roles: Role[];
 
-    @OneToMany(() => HolidayRequest, (holidayRequest) => holidayRequest.employee)
+    @OneToMany(
+      () => HolidayRequest,
+      (holidayRequest) => holidayRequest.employee,{
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+        cascade: true
+      })
     declare holidays: HolidayRequest[];
 
-    @OneToMany(() => PostEmployee, (postEmployee) => postEmployee.employee)
-    @JoinColumn({ name: "postId" })
-    declare posts: PostEmployee[];
+    @ManyToMany(() => Post, (post) => post.employee,{
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE"
+    })
+    declare posts: Post[];
 
     @OneToOne(() => Setting)
     @JoinColumn()
