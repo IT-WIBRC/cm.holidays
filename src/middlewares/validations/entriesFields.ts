@@ -61,7 +61,7 @@ const lastnameValidation = checkSchema({
     trim: true,
     isLength: {
       errorMessage: "LastName must have length less than 2",
-      options: { max: 2 }
+      options: { min: 2 }
     }
   }
 });
@@ -81,6 +81,39 @@ const assertRequiredLoginFieldsAreNotEmpty = checkSchema({
   }
 });
 
-export { passwordValidation, emailValidation, firstnameValidation, lastnameValidation };
+const nameValidation = checkSchema({
+  name: {
+    exists: {
+      errorMessage: "Name is required"
+    },
+    trim: true,
+    isLength: {
+      errorMessage: "Name must have length more than 2",
+      options: { min: 2 }
+    }
+  }
+});
+
+const descriptionValidation = checkSchema({
+  description: {
+    exists: {
+      errorMessage: "Description is required"
+    },
+    trim: true,
+    isLength: {
+      errorMessage: "Description must have length more than 10",
+      options: { min: 10 }
+    }
+  }
+});
+
+export {
+  passwordValidation,
+  emailValidation,
+  firstnameValidation,
+  lastnameValidation,
+  nameValidation,
+  descriptionValidation
+};
 
 export { assertRequiredLoginFieldsAreNotEmpty };

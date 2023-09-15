@@ -6,7 +6,7 @@ import { ApiError } from "../../middlewares/errors/Api";
 import { StatusCodes } from "http-status-codes";
 import { asyncWrapper } from "../requestHanlder";
 
-export class Person {
+export class PersonController {
   static async login(
     request: Request,
     response: Response,
@@ -15,27 +15,26 @@ export class Person {
     return await asyncWrapper(async () => {
       const employee = await PersonService.findByEmail(request.body.email);
 
-      if (employee) {
-        const isSame: boolean = await Auth.comparePassword(
-          request.body.password,
-          employee.password
-        );
+      if (!employee) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "PersonController not found");
+      }
 
-        if (isSame) {
+      const isSame: boolean = await Auth.comparePassword(
+        request.body.password,
+        employee.password
+      );
 
-          return response.status(200).send({
-            id: employee.id,
-            token: Auth.generateToken(employee)
-          });
-        }
-
+      if (!isSame) {
         throw  new ApiError(
           StatusCodes.BAD_REQUEST,
           "Wrong information provided"
         );
-      } else {
-        throw new ApiError(StatusCodes.NOT_FOUND, "Person not found");
       }
+
+      return response.status(200).send({
+        id: employee.id,
+        token: Auth.generateToken(employee)
+      });
     })(request, response, next);
   }
 }

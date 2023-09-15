@@ -17,7 +17,8 @@ export class Service implements ServiceDTO {
 
     @Column({
       type: "varchar",
-      nullable: false
+      nullable: false,
+      unique: true
     })
     declare name: string;
 
@@ -27,8 +28,10 @@ export class Service implements ServiceDTO {
     })
     declare description?: string;
 
-    @Column({ type: "boolean",
-      nullable: false })
+    @Column({
+      type: "boolean",
+      nullable: false
+    })
     declare isActive: boolean;
 
     @CreateDateColumn({ name: "created_at" })
