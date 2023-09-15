@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Person } from "../controllers/Person/Person";
+import { PersonController } from "../controllers/Person/Person.controller";
 import { assertRequiredLoginFieldsAreNotEmpty } from "../middlewares/validations/entriesFields";
 import { handleFieldsValidation } from "../middlewares/validations/handler";
 
@@ -9,7 +9,7 @@ personRouter.post(
   "/login",
   assertRequiredLoginFieldsAreNotEmpty,
   handleFieldsValidation,
-  Person.login
+  PersonController.login
 );
 
 personRouter.post("/sign-up");

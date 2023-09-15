@@ -10,4 +10,5 @@ Allow person in the company to ask for a holiday that the company allow. Further
 
 # TODO
  - Get all information ('role', holiday request, services, posts, employees) according to the user role
- - Edit (Employee, Holiday, Service, Post) information
+ - Edit (EmployeeController, Holiday, Service, Post) information
+ - user `express-jwt-permission` to manage permission as well as role (already installed)

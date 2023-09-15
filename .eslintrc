@@ -79,6 +79,17 @@
         "space-before-blocks": 2,
         "space-before-function-paren": "off",
         "space-in-parens": ["error", "never"],
-        "object-property-newline": "error"
+        "object-property-newline": "error",
+        "max-len": [
+            "error",
+            {
+                "code": 80,
+                "tabWidth": 2,
+                "ignoreComments": true,
+                "ignoreUrls": true,
+                "ignoreStrings": true,
+                "ignoreTemplateLiterals": true
+            }
+        ]
     }
 }

@@ -1,6 +1,6 @@
 import { components } from "./DTO";
 
-//Employee
+//EmployeeController
 type EmployeeType = components["schemas"]["EmployeeDTO"];
 interface EmployeeDTO extends EmployeeType {}
 
