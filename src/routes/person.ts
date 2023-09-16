@@ -1,7 +1,12 @@
 import { Router } from "express";
 import { PersonController } from "../controllers/Person/Person.controller";
-import { assertRequiredLoginFieldsAreNotEmpty } from "../middlewares/validations/entriesFields";
+import {
+  assertRequiredLoginFieldsAreNotEmpty, emailValidation,
+  firstnameValidation,
+  lastnameValidation, passwordValidation
+} from "../middlewares/validations/entriesFields";
 import { handleFieldsValidation } from "../middlewares/validations/handler";
+import { AdminController } from "../controllers/Person/AdminController";
 
 const personRouter = Router();
 
@@ -12,11 +17,15 @@ personRouter.post(
   PersonController.login
 );
 
-personRouter.post("/sign-up");
-
-personRouter.post("/reset-password-request");
-
-personRouter.post("/reset-password");
+personRouter.post(
+  "/config/administrator",
+  firstnameValidation,
+  lastnameValidation,
+  passwordValidation,
+  emailValidation,
+  handleFieldsValidation,
+  AdminController.createAdmin
+);
 
 
 export { personRouter };

@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { RoleDTO, USER_ROLE } from "./types";
-import { EmployeeRole } from "./EmployeeRole";
+import { Employee } from "./Employee";
+import { JoinTable } from "typeorm";
 
 @Entity({
   name: "t_role"
@@ -18,7 +19,8 @@ export class Role implements RoleDTO {
     @Column({
       type: "enum",
       enum: USER_ROLE,
-      nullable: false
+      nullable: false,
+      unique: true
     })
     declare type: USER_ROLE;
 
@@ -28,7 +30,11 @@ export class Role implements RoleDTO {
     })
     declare description?: string;
 
-    @OneToMany(() => EmployeeRole, (employeeRole) => employeeRole.employee)
+    @ManyToMany(() => Employee, employee => employee.roles,{
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE"
+    })
+    @JoinTable()
     @JoinColumn({ name: "employeeId" })
-    declare employees: EmployeeRole[];
+    declare employees: Employee[];
 }
