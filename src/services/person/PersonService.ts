@@ -9,7 +9,7 @@ export class PersonService {
   static async findByEmail(email: string): Promise<Employee | null> {
     return this.personManager.findOne({
       where: {
-        email
+        email: email.toLowerCase()
       },
       relations: {
         roles: true
