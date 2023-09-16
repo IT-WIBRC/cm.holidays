@@ -23,17 +23,17 @@ const passwordValidation = checkSchema({
     },
     trim: true,
     isLength: {
-      errorMessage: "Password must have at least 8 character and less than 21",
+      errorMessage: "Password must have at least 6 character and less than 11",
       options: {
-        min: 8,
-        max: 20
+        min: 6,
+        max: 10
       }
     },
     matches: {
       errorMessage:
         "Password must have at least one uppercase, lowercase, digit and special character",
       options: new RegExp(
-        "(^[\w.-@]{8,20})",
+        "(^[\w.-@]{8,10})",
         "g"
       )
     }
@@ -54,7 +54,7 @@ const firstnameValidation = checkSchema({
 });
 
 const lastnameValidation = checkSchema({
-  lastname: {
+  lastName: {
     exists: {
       errorMessage: "LastName is required"
     },

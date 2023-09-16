@@ -27,20 +27,18 @@ export class Auth {
       email,
       roles
     } = employee;
-    return JSON.stringify(
-      sign({
-        id,
-        infos: {
-          email,
-          firstname,
-          lastName,
-          roles
-        }
-      } as TokenPayload, this.TOKEN_KEY, {
-        algorithm: TOKEN_ENCRYPT_ALGO,
-        expiresIn: time
-      })
-    );
+    return sign({
+      id,
+      infos: {
+        email,
+        firstname,
+        lastName,
+        roles: roles ? roles : []
+      }
+    } as TokenPayload, this.TOKEN_KEY, {
+      algorithm: TOKEN_ENCRYPT_ALGO,
+      expiresIn: time
+    });
   }
 
   static parseToken (token: string): VerifyToken  {

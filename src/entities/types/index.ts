@@ -32,7 +32,15 @@ type Setting = components["schemas"]["SettingDTO"];
 interface SettingDTO extends Setting {}
 
 // EXPORTS TYPE
-export { EmployeeDTO, HolidayRequestDTO, HolidayTypeDTO, ServiceDTO, PostDTO, RoleDTO, SettingDTO };
+export { 
+  EmployeeDTO,
+  HolidayRequestDTO,
+  HolidayTypeDTO,
+  ServiceDTO,
+  PostDTO,
+  RoleDTO,
+  SettingDTO
+};
 
 // EXPORT ENUM
 export { USER_ROLE };

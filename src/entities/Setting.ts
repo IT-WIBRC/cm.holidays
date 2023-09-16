@@ -15,14 +15,14 @@ export class Setting implements SettingDTO {
   declare id: string;
 
     @Column({
-      type: "character",
+      type: "varchar",
       nullable: false,
       unique: true
     })
     declare defaultEmailNotification: string;
 
     @Column({
-      type: "character",
+      type: "varchar",
       nullable: true,
       unique: true
     })

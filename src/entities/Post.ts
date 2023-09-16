@@ -2,15 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  OneToMany,
+  JoinColumn, JoinTable, ManyToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from "typeorm";
 import { PostDTO } from "./types";
 import { Service } from "./Service";
-import { PostEmployee } from "./PostEmployee";
+import { Employee } from "./Employee";
 
 @Entity({
   name: "t_post"
@@ -51,7 +50,8 @@ export class Post implements PostDTO {
     @JoinColumn()
     declare service: Service;
 
-    @OneToMany(() => PostEmployee, (postEmployee) => postEmployee.posts)
+    @ManyToMany(() => Employee, (employee) => employee.posts)
     @JoinColumn({ name: "employeeId" })
-    declare employee: PostEmployee[];
+    @JoinTable()
+    declare employee: Employee[];
 }
