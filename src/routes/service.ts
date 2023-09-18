@@ -5,7 +5,7 @@ import { descriptionValidation, nameValidation } from "../middlewares/validation
 import { expressjwt } from "express-jwt";
 import { DEFAULT_TOKEN_KEY, TOKEN_ENCRYPT_ALGO } from "../utils/constants";
 import { initEnv } from "../../configEnv";
-import { UserValidationRole } from "../middlewares/validations/user/Roles";
+import { userHasRoles } from "../middlewares/validations/user/Roles";
 
 initEnv();
 const serviceRouter = Router();
@@ -16,7 +16,7 @@ serviceRouter.post(
     secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
     algorithms: [TOKEN_ENCRYPT_ALGO]
   }),
-  UserValidationRole.checkUserRole,
+  userHasRoles(["ADMIN"]),
   nameValidation,
   descriptionValidation,
   handleFieldsValidation,

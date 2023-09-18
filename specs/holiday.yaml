@@ -295,6 +295,34 @@ paths:
           description: successful operation
         404:
           description: HOLIDAY-POST-4004
+  /post/service/{id}:
+    get:
+      tags:
+        - Post
+      summary: get a post by service
+      description: get a post
+      operationId: getPostByServiceId
+      parameters:
+        - name: id
+          in: path
+          description: service id to be use to fetch posts
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/PostDTO'
+        404:
+          description: HOLIDAY-SERVICE-4004
+        401:
+          description: HOLIDAY-EMPLOYEE-4001
 
   /employee/add:
     post:
