@@ -7,9 +7,9 @@ export class CompanyService {
     = AppDataSource.getRepository(Service);
 
   static async findServiceByName(name: string): Promise<Service | null> {
-    return this.serviceManager.findOneBy({
-      name
-    });
+    return this.serviceManager.createQueryBuilder("t_service")
+      .where("LOWER(t_service.name) = LOWER(:name)", { name })
+      .getOne();
   }
 
   static async findServiceById(id: string): Promise<Service | null> {

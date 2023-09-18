@@ -9,6 +9,7 @@ import { Role } from "../../entities/Role";
 import { RoleService } from "../../services/service/Role.service";
 import { Employee } from "../../entities/Employee";
 import { SettingService } from "../../services/service/Setting.service";
+import { regulariseSpacesFrom } from "../../utils/commons";
 
 export class PersonController {
   static async login(
@@ -17,7 +18,8 @@ export class PersonController {
     next: NextFunction
   ): Promise<Response<EmployeeDTO>> {
     return await asyncWrapper(async () => {
-      const person = await PersonService.findByEmail(request.body.email);
+      const person = await PersonService
+        .findByEmail(regulariseSpacesFrom(request.body.email, ""));
 
       if (!person) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Person not found");
@@ -73,10 +75,10 @@ export class PersonController {
       });
 
       let newUser: Employee | null = new Employee();
-      newUser.firstname = firstname;
-      newUser.lastName = lastName;
+      newUser.firstname = regulariseSpacesFrom(firstname);
+      newUser.lastName = regulariseSpacesFrom(lastName);
       newUser.password = password;
-      newUser.email = email;
+      newUser.email = regulariseSpacesFrom(email, "").toLowerCase();
       newUser.setting = setting;
       newUser.roles = existingRole;
 

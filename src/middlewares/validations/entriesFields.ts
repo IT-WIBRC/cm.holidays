@@ -81,8 +81,14 @@ const assertRequiredLoginFieldsAreNotEmpty = checkSchema({
   }
 });
 
-const nameValidation = checkSchema({
+const nameSchema = {
   name: {
+    notEmpty: {
+      options: {
+        ignore_whitespace: true
+      },
+      errorMessage: "Name field is empty"
+    },
     exists: {
       errorMessage: "Name is required"
     },
@@ -92,17 +98,48 @@ const nameValidation = checkSchema({
       options: { min: 2 }
     }
   }
-});
+};
+
+const nameValidation = checkSchema(nameSchema);
 
 const descriptionValidation = checkSchema({
   description: {
     exists: {
       errorMessage: "Description is required"
     },
+    notEmpty: {
+      options: {
+        ignore_whitespace: false
+      },
+      errorMessage: "Description field is empty"
+    },
     trim: true,
     isLength: {
       errorMessage: "Description must have length more than 10",
       options: { min: 10 }
+    }
+  }
+});
+
+const assertPostCreation = checkSchema({
+  ...nameSchema,
+  service: {
+    notEmpty: {
+      options: {
+        ignore_whitespace: false
+      },
+      errorMessage: "Service field is empty"
+    },
+    exists: {
+      errorMessage: "Malformed request (service doesn't exist for this post)"
+    }
+  },
+  "service.id": {
+    exists: {
+      errorMessage: "The id field is empty"
+    },
+    isUUID: {
+      errorMessage: "Wrong id is not an uuid"
     }
   }
 });
@@ -116,4 +153,4 @@ export {
   descriptionValidation
 };
 
-export { assertRequiredLoginFieldsAreNotEmpty };
+export { assertRequiredLoginFieldsAreNotEmpty, assertPostCreation };
