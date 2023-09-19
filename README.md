@@ -5,6 +5,7 @@ Allow person in the company to ask for a holiday that the company allow. Further
  - Cannot create role
  - Cannot assign role to user
  - cannot update role
+ - cannot activate or deactivate role
  - The Roles presents are statics
  - Edit user profile
 

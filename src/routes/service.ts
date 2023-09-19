@@ -11,7 +11,7 @@ initEnv();
 const serviceRouter = Router();
 
 serviceRouter.post(
-  "/create",
+  "/add",
   expressjwt({
     secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
     algorithms: [TOKEN_ENCRYPT_ALGO]
@@ -21,6 +21,16 @@ serviceRouter.post(
   descriptionValidation,
   handleFieldsValidation,
   ServiceController.createService
+);
+
+serviceRouter.get(
+  "/all",
+  expressjwt({
+    secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
+    algorithms: [TOKEN_ENCRYPT_ALGO]
+  }),
+  userHasRoles(["ADMIN", "HUMAN_RESOURCE"], false),
+  ServiceController.getAllServices
 );
 
 export { serviceRouter };

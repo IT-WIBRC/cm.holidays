@@ -1,5 +1,5 @@
 import { Role } from "../../entities/Role";
-import { Repository } from "typeorm";
+import { Not, Repository } from "typeorm";
 import { AppDataSource } from "../../data-source";
 import { USER_ROLE } from "../../entities/types";
 
@@ -21,5 +21,12 @@ export class RoleService {
 
   static async create(role: Role): Promise<Role> {
     return this.roleManager.save(role);
+  }
+
+  static async findAll(isAdmin: boolean): Promise<Role[]> {
+    return this.roleManager.find({
+      select: ["id", "description", "type"],
+      where: { type: isAdmin ? undefined :  Not(USER_ROLE.ADMIN) }
+    });
   }
 }

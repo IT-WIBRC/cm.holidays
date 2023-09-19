@@ -65,11 +65,11 @@ export class PostController {
         throw new ApiError(StatusCodes.NOT_FOUND, "Service not found");
       }
 
-      const { isAdmin, isHumanResource } = response.locals.roles;
+      const { isAdmin, isHumanResource  } = response.locals.roles;
       const posts = await PostService
         .findPostByServiceId(
           service.id,
-          isAdmin || isHumanResource
+          isAdmin || !isHumanResource
         );
 
       return response.status(StatusCodes.OK).send(posts);

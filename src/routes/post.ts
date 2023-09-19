@@ -11,7 +11,7 @@ initEnv();
 const postRouter = Router();
 
 postRouter.post(
-  "/create",
+  "/add",
   expressjwt({
     secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
     algorithms: [TOKEN_ENCRYPT_ALGO]
