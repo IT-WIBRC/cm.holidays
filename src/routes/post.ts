@@ -4,7 +4,7 @@ import { assertPostCreation } from "../middlewares/validations/entriesFields";
 import { expressjwt } from "express-jwt";
 import { DEFAULT_TOKEN_KEY, TOKEN_ENCRYPT_ALGO } from "../utils/constants";
 import { initEnv } from "../../configEnv";
-import { UserValidationRole } from "../middlewares/validations/user/Roles";
+import { userHasRoles } from "../middlewares/validations/user/Roles";
 import { PostController } from "../controllers/Service/Post.controller";
 
 initEnv();
@@ -16,10 +16,20 @@ postRouter.post(
     secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
     algorithms: [TOKEN_ENCRYPT_ALGO]
   }),
-  UserValidationRole.checkUserRole,
+  userHasRoles(["ADMIN"]),
   assertPostCreation,
   handleFieldsValidation,
   PostController.create
+);
+
+postRouter.get(
+  "/service/:id",
+  expressjwt({
+    secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
+    algorithms: [TOKEN_ENCRYPT_ALGO]
+  }),
+  userHasRoles(["ADMIN", "HUMAN_RESOURCE"], false),
+  PostController.getPostByServiceId
 );
 
 export { postRouter };

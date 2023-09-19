@@ -14,7 +14,11 @@ export class PostController {
     next: NextFunction
   ): Promise<string> {
     return await asyncWrapper(async () => {
-      const { name, description, service: { id } } = request.body;
+      const {
+        name,
+        description,
+        service: { id }
+      } = request.body;
       const existingPost = await PostService
         .findByName(regulariseSpacesFrom(name));
 
@@ -41,6 +45,34 @@ export class PostController {
         id: newPost.id
       });
 
+    })(request, response, next);
+  }
+
+  static async getPostByServiceId(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<string> {
+    return await asyncWrapper(async () => {
+      const { id } = request.params;
+      if (!id) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Service id is missing");
+      }
+
+      const service = await CompanyService.findServiceById(id);
+
+      if (!service) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Service not found");
+      }
+
+      const { isAdmin, isHumanResource } = response.locals.roles;
+      const posts = await PostService
+        .findPostByServiceId(
+          service.id,
+          isAdmin || isHumanResource
+        );
+
+      return response.status(StatusCodes.OK).send(posts);
     })(request, response, next);
   }
 }

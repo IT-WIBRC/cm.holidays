@@ -1,32 +1,44 @@
 import { Request as JWTRequest } from "express-jwt";
 import { NextFunction, Response } from "express";
-import { RoleDTO, USER_ROLE } from "../../../entities/types";
-import { ApiError } from "../../errors/Api";
-import statusCode from "http-status-codes";
-import { JwtPayload } from "jsonwebtoken";
+import { USER_ROLE } from "../../../entities/types";
 import { TokenPayload } from "../../../utils/types";
-export class UserValidationRole {
+import { ApiError } from "../../errors/Api";
+import { StatusCodes } from "http-status-codes";
+import { toCamelCase } from "../../../utils/commons";
 
-  static checkUserRole(
-    request: JWTRequest,
-    response: Response,
-    next: NextFunction
-  ) {
-    const parsedToken: JwtPayload | undefined = request.auth;
-    if (UserValidationRole.isUserAdmin(parsedToken as TokenPayload)) {
-      next();
-    } else {
-      next(
-        new ApiError(
-          statusCode.UNAUTHORIZED,
-          "User has not authorization to do that")
-      );
-    }
+export const userHasRoles = (
+  roles: (keyof typeof USER_ROLE)[],
+  all = true
+) => (
+  request: JWTRequest,
+  response: Response,
+  next: NextFunction
+): void  => {
+  const userRoles = (request.auth as TokenPayload).infos.roles;
+
+  response.locals.roles = {};
+  userRoles.forEach((userRole) => {
+    response.locals.roles[`is${toCamelCase(userRole.type as string)}`] = true;
+  });
+
+  let finalVerdict: boolean;
+
+  if (all) {
+    finalVerdict = roles
+      .every((role) => Boolean(response.locals.roles[`is${toCamelCase(role as string)}`]));
+  } else {
+    finalVerdict =  roles
+      .some((role) => Boolean(response.locals.roles[`is${toCamelCase(role as string)}`]));
   }
 
-  private static isUserAdmin (token: TokenPayload): boolean {
-    return Boolean(token?.
-      infos?.roles
-      .find((role: RoleDTO) => role.type === USER_ROLE.ADMIN));
+  if (finalVerdict) {
+    next();
+  } else {
+    next(
+      new ApiError(
+        StatusCodes.UNAUTHORIZED,
+        "This User cannot access to this resource")
+    );
   }
-}
+
+};
