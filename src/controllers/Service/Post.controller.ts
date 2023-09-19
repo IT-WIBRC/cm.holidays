@@ -69,7 +69,7 @@ export class PostController {
       const posts = await PostService
         .findPostByServiceId(
           service.id,
-          isAdmin || isHumanResource
+          isAdmin || !isHumanResource
         );
 
       return response.status(StatusCodes.OK).send(posts);

@@ -76,7 +76,7 @@ paths:
           description: HOLIDAY-SERVICE-4009
         404:
           description: HOLIDAY-SERVICE-4004
-  /services:
+  /service/all:
     get:
       tags:
         - Service
@@ -221,7 +221,7 @@ paths:
           description: HOLIDAY-POST-4009
         404:
           description: HOLIDAY-POST-4004
-  /posts:
+  /post/all:
     get:
       tags:
         - Post
@@ -350,7 +350,7 @@ paths:
           description: HOLIDAY-EMPLOYEE-4009
         401:
           description: HOLIDAY-EMPLOYEE-4001
-  /employees:
+  /employee/all:
     get:
       tags:
         - Employee
@@ -530,7 +530,7 @@ paths:
           description: successful operation
         404:
           description: HOLIDAY-ROLE-4004
-  /roles:
+  /role/all:
     get:
       tags:
         - Role
@@ -704,7 +704,7 @@ paths:
           description: successful operation
         404:
           description: HOLIDAY-REQUEST-4004
-  /holidayRequest:
+  /holidayRequest/all:
     get:
       tags:
         - HolidayRequest

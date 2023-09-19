@@ -1,4 +1,4 @@
-import { FindManyOptions, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { Post } from "../entities/Post";
 import { AppDataSource } from "../data-source";
 
@@ -17,25 +17,15 @@ export class PostService {
     id: string,
     isAdmin = false
   ): Promise<Post[]> {
-    const searchBody: FindManyOptions<Post> = isAdmin
-      ? {
-        select: ["id", "description", "name", "isActive"],
-        where: {
-          service: {
-            id
-          }
+    return this.postManager.find({
+      select: ["id", "description", "name", "isActive"],
+      where: {
+        isActive: isAdmin ? undefined : !isAdmin,
+        service: {
+          id
         }
       }
-      : {
-        select: ["id", "description", "name"],
-        where: {
-          isActive: !isAdmin,
-          service: {
-            id
-          }
-        }
-      };
-    return this.postManager.find(searchBody);
+    });
   }
 
   static async create(post: Post): Promise<Post> {

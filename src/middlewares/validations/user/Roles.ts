@@ -21,16 +21,14 @@ export const userHasRoles = (
     response.locals.roles[`is${toCamelCase(userRole.type as string)}`] = true;
   });
 
-  const validationUserRolesResults = roles.map((role) =>
-    Boolean(response.locals.roles[`is${toCamelCase(role as string)}`]));
   let finalVerdict: boolean;
 
   if (all) {
-    finalVerdict = validationUserRolesResults
-      .every((validationRole) => validationRole);
+    finalVerdict = roles
+      .every((role) => Boolean(response.locals.roles[`is${toCamelCase(role as string)}`]));
   } else {
-    finalVerdict = validationUserRolesResults
-      .some((validationRole) => validationRole);
+    finalVerdict =  roles
+      .some((role) => Boolean(response.locals.roles[`is${toCamelCase(role as string)}`]));
   }
 
   if (finalVerdict) {

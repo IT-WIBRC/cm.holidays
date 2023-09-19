@@ -21,8 +21,11 @@ export class ServiceController {
         );
       }
 
-      const { name, description } = request.body;
-      const newCreatedService  = await CompanyService.create({
+      const {
+        name,
+        description
+      } = request.body;
+      const newCreatedService = await CompanyService.create({
         name: regulariseSpacesFrom(name),
         description: regulariseSpacesFrom(description),
         isActive: false
@@ -32,6 +35,23 @@ export class ServiceController {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Creation failed to proceed");
       }
       return response.sendStatus(StatusCodes.CREATED);
+    })(request, response, next);
+  }
+
+  static async getAllServices(request: Request,
+    response: Response,
+    next: NextFunction): Promise<Response<ServiceDTO>> {
+    return await asyncWrapper(async () => {
+
+      const { isAdmin, isHumanResource } = response.locals.roles;
+      const services =await CompanyService.findAll(
+        {
+          withRelation: true,
+          isAdmin: isAdmin || !isHumanResource
+        }
+      );
+
+      return response.status(StatusCodes.OK).send(services);
     })(request, response, next);
   }
 }

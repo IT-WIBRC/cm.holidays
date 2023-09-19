@@ -21,4 +21,18 @@ export class CompanyService {
   static async create(service: ServiceDTO): Promise<Service | null> {
     return this.serviceManager.save(service);
   }
+  
+  static async findAll({
+    withRelation,
+    isAdmin
+  }: { withRelation: boolean, isAdmin: boolean }
+  ): Promise<Service[]> {
+    return this.serviceManager.find({
+      select: ["id", "description", "name", "createdAt", "isActive"],
+      where: isAdmin ? {} : { isActive: !isAdmin },
+      relations: {
+        posts: withRelation
+      }
+    });
+  }
 }
