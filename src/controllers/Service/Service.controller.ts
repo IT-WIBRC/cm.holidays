@@ -54,4 +54,25 @@ export class ServiceController {
       return response.status(StatusCodes.OK).send(services);
     })(request, response, next);
   }
+
+  static async activeService(request: Request,
+    response: Response,
+    next: NextFunction): Promise<Response<ServiceDTO>> {
+    return await asyncWrapper(async () => {
+
+      const service = await CompanyService.findServiceById(request.body.id);
+      if (!service) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Service not found");
+      }
+
+      if (service.isActive) {
+        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, "Service is already active");
+      }
+
+      service.isActive = true;
+      await CompanyService.activate(service);
+
+      return response.sendStatus(StatusCodes.NO_CONTENT);
+    })(request, response, next);
+  }
 }
