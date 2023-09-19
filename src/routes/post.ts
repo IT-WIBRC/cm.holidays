@@ -32,4 +32,14 @@ postRouter.get(
   PostController.getPostByServiceId
 );
 
+postRouter.put(
+  "/:id/activate",
+  expressjwt({
+    secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
+    algorithms: [TOKEN_ENCRYPT_ALGO]
+  }),
+  userHasRoles(["ADMIN"]),
+  PostController.activePost
+);
+
 export { postRouter };

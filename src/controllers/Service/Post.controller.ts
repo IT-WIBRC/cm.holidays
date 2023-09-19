@@ -6,6 +6,7 @@ import { StatusCodes } from "http-status-codes";
 import { CompanyService } from "../../services/service/Service";
 import { Post } from "../../entities/Post";
 import { regulariseSpacesFrom } from "../../utils/commons";
+import { ServiceDTO } from "../../entities/types";
 
 export class PostController {
   static async create(
@@ -73,6 +74,31 @@ export class PostController {
         );
 
       return response.status(StatusCodes.OK).send(posts);
+    })(request, response, next);
+  }
+
+  static async activePost(request: Request,
+    response: Response,
+    next: NextFunction): Promise<Response<ServiceDTO>> {
+    return await asyncWrapper(async () => {
+
+      if (!request.params.id) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "No id found");
+      }
+
+      const post = await PostService.findById(request.params.id);
+      if (!post) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Post not found");
+      }
+
+      if (post.isActive) {
+        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, "Post is already active");
+      }
+
+      post.isActive = true;
+      await PostService.activate(post);
+
+      return response.sendStatus(StatusCodes.NO_CONTENT);
     })(request, response, next);
   }
 }
