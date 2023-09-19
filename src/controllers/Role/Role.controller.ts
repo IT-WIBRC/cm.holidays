@@ -12,7 +12,10 @@ export class RoleController {
     next: NextFunction
   ): Promise<string> {
     return await asyncWrapper(async () => {
-      const { type, description } = request.body;
+      const {
+        type,
+        description
+      } = request.body;
       const role = await RoleService.findRoleByType(type);
 
       if (role) {
@@ -26,4 +29,18 @@ export class RoleController {
       await RoleService.create(roleToCreate);
     })(request, response, next);
   }
+
+  static async getAll(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<string> {
+    return await asyncWrapper(async () => {
+
+      const { isAdmin, isHumanResource } = response.locals.roles;
+      const roles = await RoleService.findAll(isAdmin || !isHumanResource);
+      return response.status(StatusCodes.OK).send(roles);
+    })(request, response, next);
+  }
+      
 }
