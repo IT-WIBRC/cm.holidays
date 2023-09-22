@@ -48,13 +48,13 @@ export class PersonController {
     response: Response,
     next: NextFunction): Promise<string> {
     return asyncWrapper(async () => {
-      const person = await PersonService.findByEmail(request.body.email);
+      const { firstname, lastName, password, email, roles } = request.body;
+
+      const person = await PersonService.findByEmail(email);
 
       if (person) {
         throw new ApiError(StatusCodes.CONFLICT, "Person already exist");
       }
-
-      const { firstname, lastName, password, email, roles } = request.body;
 
       if (!roles.length) {
         throw new ApiError(StatusCodes.BAD_REQUEST, "Request has been malformed");

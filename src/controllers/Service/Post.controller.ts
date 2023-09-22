@@ -37,7 +37,7 @@ export class PostController {
       newPost.name = regulariseSpacesFrom(name);
       newPost.service = serviceOfPost;
       newPost.isActive = false;
-      if (description.trim())
+      if (description?.trim())
         newPost.description = regulariseSpacesFrom(description);
 
       newPost = await PostService.create(newPost);

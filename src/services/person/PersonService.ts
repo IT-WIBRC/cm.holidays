@@ -1,6 +1,7 @@
 import { AppDataSource } from "../../data-source";
 import { Employee } from "../../entities/Employee";
 import { Repository } from "typeorm";
+import { Post } from "../../entities/Post";
 
 export class PersonService {
   private static personManager: Repository<Employee> =
@@ -16,6 +17,13 @@ export class PersonService {
       },
       loadEagerRelations: true
     });
+  }
+
+  static async findByLastName(lastName: string): Promise<Employee | null> {
+    return this.personManager
+      .createQueryBuilder("t_employee")
+      .where("LOWER(t_employee.lastName) = LOWER(:lastName)", { lastName })
+      .getOne();
   }
 
   static async create(person: Employee): Promise<Employee | null> {

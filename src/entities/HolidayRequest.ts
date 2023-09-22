@@ -1,7 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Employee } from "./Employee";
-import { HolidayRequestDTO } from "./types";
-import { HolidayType } from "./HolidayType";
+import { HolidayRequestDTO, HolidayTypeDTO  } from "./types";
 
 @Entity({
   name: "t_holidayRequest"
@@ -43,7 +42,10 @@ export class HolidayRequest implements HolidayRequestDTO {
     @ManyToOne(() => Employee, (employee) => employee.holidays)
     declare employee: Employee;
 
-    @OneToOne(() => HolidayType)
-    @JoinColumn()
-    declare holidayType: HolidayType;
+    @Column({
+      type: "varchar",
+      nullable: false,
+      default: "DRAFT"
+    })
+    declare holidayType: HolidayTypeDTO;
 }

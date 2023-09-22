@@ -10,7 +10,9 @@ const emailValidation = checkSchema({
       errorMessage: "Email is in wrong format",
       options: {
         allow_ip_domain: false,
-        allow_utf8_local_part: true
+        allow_utf8_local_part: true,
+        require_tld: true,
+        ignore_max_length: true
       }
     }
   }
@@ -33,7 +35,7 @@ const passwordValidation = checkSchema({
       errorMessage:
         "Password must have at least one uppercase, lowercase, digit and special character",
       options: new RegExp(
-        "(^[\w.-@]{8,10})",
+        "(^[\\w.-@]{8,10})",
         "g"
       )
     }
@@ -144,13 +146,49 @@ const assertPostCreation = checkSchema({
   }
 });
 
+const rolesValidation = checkSchema({
+  roles: {
+    notEmpty: {
+      errorMessage: "Roles are required",
+      options: {
+        ignore_whitespace: true
+      }
+    },
+    isArray: {
+      options: {
+        min: 1
+      },
+      errorMessage: "Roles must be and array"
+    }
+  }
+});
+
+const postsValidation = checkSchema({
+  posts: {
+    notEmpty: {
+      errorMessage: "Posts are required",
+      options: {
+        ignore_whitespace: true
+      }
+    },
+    isArray: {
+      options: {
+        min: 1
+      },
+      errorMessage: "Post must be and array"
+    }
+  }
+});
+
 export {
   passwordValidation,
   emailValidation,
   firstnameValidation,
   lastnameValidation,
   nameValidation,
-  descriptionValidation
+  descriptionValidation,
+  rolesValidation,
+  postsValidation
 };
 
 export { assertRequiredLoginFieldsAreNotEmpty, assertPostCreation };
