@@ -60,7 +60,11 @@ export class ServiceController {
     next: NextFunction): Promise<Response<ServiceDTO>> {
     return await asyncWrapper(async () => {
 
-      const service = await CompanyService.findServiceById(request.body.id);
+      if (!request.params.id) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "No id found");
+      }
+
+      const service = await CompanyService.findServiceById(request.params.id);
       if (!service) {
         throw new ApiError(StatusCodes.BAD_REQUEST, "Service not found");
       }

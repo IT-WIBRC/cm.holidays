@@ -13,6 +13,12 @@ export class PostService {
       .getOne();
   }
 
+  static async findById(id: string): Promise<Post | null> {
+    return this.postManager.findOneBy({
+      id
+    });
+  }
+
   static async findPostByServiceId(
     id: string,
     isAdmin = false
@@ -30,5 +36,11 @@ export class PostService {
 
   static async create(post: Post): Promise<Post> {
     return this.postManager.save(post);
+  }
+
+  static async activate(post: Post): Promise<void> {
+    await this.postManager.update({
+      id: post.id
+    }, post);
   }
 }
