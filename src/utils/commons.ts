@@ -2,10 +2,13 @@ export const regulariseSpacesFrom = (word: string, to = " "): string => {
   return word.trim().replace(/\s+/g, to);
 };
 
+const camelCaseAWord = (simpleWord: string): string =>
+  `${simpleWord.slice(0,1).toUpperCase()}${simpleWord.slice(1).toLowerCase()}`;
 export const toCamelCase = (word: string): string => {
-  const hasUnderScore = word.split("_").length > 1;
-  if (hasUnderScore) {
-    return word.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
+  const splitWord = word.split("_");
+  if (splitWord.length > 1) {
+    return splitWord.reduce((previousValue, currentValue) =>
+      `${camelCaseAWord(previousValue)}${camelCaseAWord(currentValue)}`);
   }
-  return `${word.slice(0,1).toUpperCase()}${word.slice(1).toLowerCase()}`;
+  return camelCaseAWord(word);
 };

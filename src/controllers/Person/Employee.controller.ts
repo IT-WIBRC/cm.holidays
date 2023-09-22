@@ -68,11 +68,11 @@ export class EmployeeController extends PersonController {
           userToCreateRole.type === USER_ROLE.EMPLOYEE);
 
       const canCreateUser =
-        (userWantedToBeCreateHasAdminRole && creatorIsAdmin) ||
+        (userWantedToBeCreateHasAdminRole && !!creatorIsAdmin) ||
         userWantedToBeCreateHasHumanResourceRole &&
-        (creatorIsAdmin || creatorIsHumanResource) ||
+        (!!creatorIsAdmin || !!creatorIsHumanResource) ||
         userWantedToBeCreateHasEmployeeRole &&
-        (creatorIsAdmin || creatorIsHumanResource);
+        (!!creatorIsAdmin || !!creatorIsHumanResource);
 
       if (!canCreateUser) {
         throw new ApiError(StatusCodes.UNAUTHORIZED, "User cannot create this one");
