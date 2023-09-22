@@ -862,18 +862,12 @@ components:
         employee:
           $ref: '#/components/schemas/EmployeeDTO'
     HolidayTypeDTO:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: Holiday type identifier
-        name:
-          type: string
-          description: name of the holiday type
-        description:
-          type: string
-          description: an explanation and  maybe some condition and restrictions
+      type: string
+      enum:
+        - DRAFT
+        - PENDING
+        - APPROVED
+        - REJECTED
     SettingDTO:
       type: object
       properties:

@@ -6,9 +6,9 @@ interface EmployeeDTO extends EmployeeType {}
 
 //Holiday Request
 type HolidayRequestType = components["schemas"]["HolidayRequestDTO"];
-type HolidayType = components["schemas"]["HolidayTypeDTO"];
+
+type HolidayTypeDTO = components["schemas"]["HolidayTypeDTO"]
 interface HolidayRequestDTO extends HolidayRequestType {}
-interface HolidayTypeDTO extends HolidayType {}
 
 //Service
 type ServiceType = components["schemas"]["ServiceDTO"];
@@ -35,7 +35,6 @@ interface SettingDTO extends Setting {}
 export { 
   EmployeeDTO,
   HolidayRequestDTO,
-  HolidayTypeDTO,
   ServiceDTO,
   PostDTO,
   RoleDTO,
@@ -43,4 +42,4 @@ export {
 };
 
 // EXPORT ENUM
-export { USER_ROLE };
+export { USER_ROLE, HolidayTypeDTO };
