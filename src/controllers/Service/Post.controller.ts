@@ -82,11 +82,22 @@ export class PostController {
     next: NextFunction): Promise<Response<ServiceDTO>> {
     return await asyncWrapper(async () => {
 
-      if (!request.params.id) {
+      const { id }  = request.params;
+
+      if (!id) {
         throw new ApiError(StatusCodes.BAD_REQUEST, "No id found");
       }
 
-      const post = await PostService.findById(request.params.id);
+      const serviceOfPost = await CompanyService.findServiceByPostId(id);
+      if (!serviceOfPost) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "There is no service for this post");
+      }
+
+      if (!serviceOfPost.isActive) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "The service of this post is not active");
+      }
+
+      const post = await PostService.findById(id);
       if (!post) {
         throw new ApiError(StatusCodes.BAD_REQUEST, "Post not found");
       }

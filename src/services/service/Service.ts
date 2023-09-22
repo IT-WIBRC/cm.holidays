@@ -2,6 +2,7 @@ import { Repository } from "typeorm";
 import { Service } from "../../entities/Service";
 import { AppDataSource } from "../../data-source";
 import { ServiceDTO } from "../../entities/types";
+
 export class CompanyService {
   private  static serviceManager: Repository<Service>
     = AppDataSource.getRepository(Service);
@@ -40,5 +41,13 @@ export class CompanyService {
     await this.serviceManager.update({
       id: service.id
     }, service);
+  }
+
+  static async findServiceByPostId(id: string): Promise<Service | null> {
+    return this.serviceManager.findOneBy({
+      posts: {
+        id
+      }
+    });
   }
 }

@@ -1,7 +1,6 @@
 import { AppDataSource } from "../../data-source";
 import { Employee } from "../../entities/Employee";
 import { Repository } from "typeorm";
-import { Post } from "../../entities/Post";
 
 export class PersonService {
   private static personManager: Repository<Employee> =
