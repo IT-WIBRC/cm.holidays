@@ -32,6 +32,8 @@ paths:
           description: HOLIDAY-SERVICE-4009
         401:
           description: HOLIDAY-SERVICE-4001
+        500:
+          description: HOLIDAY-SERVICE-5000
   /service/{id}/activate:
     put:
       tags:
@@ -177,6 +179,8 @@ paths:
           description: HOLIDAY-POST-4009
         401:
           description: HOLIDAY-POST-4001
+        500:
+          description: HOLIDAY-POST-5000
   /post/{id}/activate:
     put:
       tags:
@@ -350,6 +354,8 @@ paths:
           description: HOLIDAY-EMPLOYEE-4009
         401:
           description: HOLIDAY-EMPLOYEE-4001
+        500:
+          description: HOLIDAY-EMPLOYEE-5000
   /employee/all:
     get:
       tags:
@@ -476,6 +482,8 @@ paths:
           description: HOLIDAY-ROLE-4009
         401:
           description: HOLIDAY-ROLE-4001
+        500:
+          description: HOLIDAY-ROLE-5000
   /role/{id}:
     get:
       tags:
@@ -650,6 +658,8 @@ paths:
           description: HOLIDAY-REQUEST-4009
         401:
           description: HOLIDAY-REQUEST-4001
+        500:
+          description: HOLIDAY-REQUEST-5000
   /holidayRequest/{id}:
     get:
       tags:
@@ -724,6 +734,35 @@ paths:
           description: HOLIDAY-REQUEST-4000
         401:
           description: HOLIDAY-REQUEST-4001
+
+  /holidayType/add:
+    post:
+      tags:
+        - HolidayType
+      summary: create a new holiday type
+      description: create a new holiday type
+      operationId: createHolidayType
+      requestBody:
+        description: holiday type object that need to be add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HolidayTypeDTO'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+        409:
+          description: HOLIDAY-TYPE-4009
+        401:
+          description: HOLIDAY-TYPE-4001
+        500:
+          description: HOLIDAY-TYPE-5000
 components:
   schemas:
     EmployeeDTO:

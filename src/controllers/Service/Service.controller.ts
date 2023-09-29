@@ -34,7 +34,7 @@ export class ServiceController {
       if (!newCreatedService) {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Creation failed to proceed");
       }
-      return response.sendStatus(StatusCodes.CREATED);
+      return response.status(StatusCodes.CREATED).send(newCreatedService.id);
     })(request, response, next);
   }
 

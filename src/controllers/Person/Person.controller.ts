@@ -87,7 +87,7 @@ export class PersonController {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "User has failed to be create");
       }
 
-      return response.sendStatus(StatusCodes.CREATED);
+      return response.status(StatusCodes.CREATED).send(newUser.id);
     })(request, request, next);
   }
 }
