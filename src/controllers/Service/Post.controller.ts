@@ -3,7 +3,7 @@ import { asyncWrapper } from "../requestHanlder";
 import { PostService } from "../../services/Post.service";
 import { ApiError } from "../../middlewares/errors/Api";
 import { StatusCodes } from "http-status-codes";
-import { CompanyService } from "../../services/service/Service";
+import { CompanyService } from "../../services/Company.service";
 import { Post } from "../../entities/Post";
 import { regulariseSpacesFrom } from "../../utils/commons";
 import { ServiceDTO } from "../../entities/types";

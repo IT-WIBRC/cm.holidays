@@ -1,7 +1,7 @@
-import { Role } from "../../entities/Role";
+import { Role } from "../entities/Role";
 import { Not, Repository } from "typeorm";
-import { AppDataSource } from "../../data-source";
-import { USER_ROLE } from "../../entities/types";
+import { AppDataSource } from "../data-source";
+import { USER_ROLE } from "../entities/types";
 
 export class RoleService {
   private static roleManager: Repository<Role>

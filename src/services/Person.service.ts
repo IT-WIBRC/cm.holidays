@@ -1,5 +1,5 @@
-import { AppDataSource } from "../../data-source";
-import { Employee } from "../../entities/Employee";
+import { AppDataSource } from "../data-source";
+import { Employee } from "../entities/Employee";
 import { Repository } from "typeorm";
 
 export class PersonService {

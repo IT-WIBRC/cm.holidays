@@ -1,12 +1,12 @@
 import { PersonController } from "./Person.controller";
 import { NextFunction, Request, Response } from "express";
 import { asyncWrapper } from "../requestHanlder";
-import { PersonService } from "../../services/person/PersonService";
+import { PersonService } from "../../services/Person.service";
 import { ApiError } from "../../middlewares/errors/Api";
 import { StatusCodes } from "http-status-codes";
 import { Role } from "../../entities/Role";
-import { RoleService } from "../../services/service/Role.service";
-import { SettingService } from "../../services/service/Setting.service";
+import { RoleService } from "../../services/Role.service";
+import { SettingService } from "../../services/Setting.service";
 import { Employee } from "../../entities/Employee";
 import { regulariseSpacesFrom } from "../../utils/commons";
 import { PostService } from "../../services/Post.service";

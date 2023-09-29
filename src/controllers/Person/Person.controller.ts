@@ -1,14 +1,14 @@
 import { EmployeeDTO } from "../../entities/types";
 import { NextFunction, Request, Response } from "express";
-import { PersonService } from "../../services/person/PersonService";
+import { PersonService } from "../../services/Person.service";
 import { Auth } from "../../utils/auth";
 import { ApiError } from "../../middlewares/errors/Api";
 import { StatusCodes } from "http-status-codes";
 import { asyncWrapper } from "../requestHanlder";
 import { Role } from "../../entities/Role";
-import { RoleService } from "../../services/service/Role.service";
+import { RoleService } from "../../services/Role.service";
 import { Employee } from "../../entities/Employee";
-import { SettingService } from "../../services/service/Setting.service";
+import { SettingService } from "../../services/Setting.service";
 import { regulariseSpacesFrom } from "../../utils/commons";
 
 export class PersonController {

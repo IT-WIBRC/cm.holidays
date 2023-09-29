@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ServiceDTO } from "../../entities/types";
 import { asyncWrapper } from "../requestHanlder";
-import { CompanyService } from "../../services/service/Service";
+import { CompanyService } from "../../services/Company.service";
 import { ApiError } from "../../middlewares/errors/Api";
 import { StatusCodes } from "http-status-codes";
 import { regulariseSpacesFrom } from "../../utils/commons";
