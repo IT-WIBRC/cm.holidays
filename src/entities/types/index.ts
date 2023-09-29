@@ -7,7 +7,8 @@ interface EmployeeDTO extends EmployeeType {}
 //Holiday Request
 type HolidayRequestType = components["schemas"]["HolidayRequestDTO"];
 
-type HolidayTypeDTO = components["schemas"]["HolidayTypeDTO"]
+type HolidayTypeDTO = components["schemas"]["HolidayTypeDTO"];
+
 interface HolidayRequestDTO extends HolidayRequestType {}
 
 //Service
@@ -27,6 +28,13 @@ enum USER_ROLE {
     HUMAN_RESOURCE = "HUMAN_RESOURCE"
 }
 
+enum HolidayStatusDTO {
+  DRAFT = "DRAFT",
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED"
+}
+
 // Setting
 type Setting = components["schemas"]["SettingDTO"];
 interface SettingDTO extends Setting {}
@@ -38,8 +46,9 @@ export {
   ServiceDTO,
   PostDTO,
   RoleDTO,
-  SettingDTO
+  SettingDTO,
+  HolidayTypeDTO
 };
 
 // EXPORT ENUM
-export { USER_ROLE, HolidayTypeDTO };
+export { USER_ROLE, HolidayStatusDTO };

@@ -857,11 +857,26 @@ components:
           type: string
           format: date-time
           description: user updating date
-        holidayType:
+        type:
           $ref: '#/components/schemas/HolidayTypeDTO'
+        status:
+          $ref: '#/components/schemas/HolidayStatusDTO'
         employee:
           $ref: '#/components/schemas/EmployeeDTO'
     HolidayTypeDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: identifier the holiday type id
+        description:
+          type: string
+          description: holiday type description
+        name:
+          type: string
+          description: holiday type name
+    HolidayStatusDTO:
       type: string
       enum:
         - DRAFT
