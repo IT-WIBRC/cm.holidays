@@ -44,7 +44,7 @@ export class ServiceController {
     return await asyncWrapper(async () => {
 
       const { isAdmin, isHumanResource } = response.locals.roles;
-      const services =await CompanyService.findAll(
+      const services = await CompanyService.findAll(
         {
           withRelation: true,
           isAdmin: isAdmin || !isHumanResource
