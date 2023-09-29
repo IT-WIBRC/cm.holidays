@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { asyncWrapper } from "../requestHanlder";
-import { RoleService } from "../../services/service/Role.service";
+import { RoleService } from "../../services/Role.service";
 import { ApiError } from "../../middlewares/errors/Api";
 import { StatusCodes } from "http-status-codes";
 import { Role } from "../../entities/Role";

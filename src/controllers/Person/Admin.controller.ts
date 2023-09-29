@@ -3,7 +3,7 @@ import { asyncWrapper } from "../requestHanlder";
 import { PersonController } from "./Person.controller";
 import { Role } from "../../entities/Role";
 import { USER_ROLE } from "../../entities/types";
-import { RoleService } from "../../services/service/Role.service";
+import { RoleService } from "../../services/Role.service";
 
 export class AdminController extends PersonController {
 
