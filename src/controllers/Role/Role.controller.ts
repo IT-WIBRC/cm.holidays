@@ -44,7 +44,7 @@ export class RoleController {
 
       const { isAdmin, isHumanResource } = response.locals.roles;
       const roles = await RoleService.findAll(isAdmin || !isHumanResource);
-      return response.status(StatusCodes.OK).send(roles);
+      return response.status(StatusCodes.OK).json(roles);
     })(request, response, next);
   }
       
