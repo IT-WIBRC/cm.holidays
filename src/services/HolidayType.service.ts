@@ -16,4 +16,8 @@ export class HolidayTypeService {
   static async create(holidayType: HolidayType): Promise<HolidayType | null> {
     return this.holidayTypeManager.save(holidayType);
   }
+
+  static async findAll(): Promise<HolidayType[]> {
+    return this.holidayTypeManager.find();
+  }
 }

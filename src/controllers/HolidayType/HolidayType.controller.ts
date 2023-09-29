@@ -38,4 +38,16 @@ export class HolidayTypeController {
       response.status(StatusCodes.CREATED).send(holidayTypeToCreate.id);
     })(request, response, next);
   }
+
+  static async getAll(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response<string>> {
+    return await asyncWrapper(async () => {
+      const holidayTypes: HolidayType[] = await HolidayTypeService.findAll();
+
+      response.status(StatusCodes.OK).json(holidayTypes);
+    })(request, response, next);
+  }
 }

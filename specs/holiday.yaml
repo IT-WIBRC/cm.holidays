@@ -763,6 +763,26 @@ paths:
           description: HOLIDAY-TYPE-4001
         500:
           description: HOLIDAY-TYPE-5000
+  /holidayType/all:
+    get:
+      tags:
+        - HolidayType
+      summary: get all holiday types
+      description: get all holiday types
+      operationId: getAllHolidayTypes
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HolidayTypeDTO'
+        400:
+          description: HOLIDAY-TYPE-4000
+        401:
+          description: HOLIDAY-TYPE-4001
 components:
   schemas:
     EmployeeDTO:
