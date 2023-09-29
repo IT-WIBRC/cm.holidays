@@ -43,4 +43,8 @@ export class PostService {
       id: post.id
     }, post);
   }
+
+  static async findAll(): Promise<Post[]> {
+    return this.postManager.find();
+  }
 }

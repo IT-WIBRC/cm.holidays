@@ -57,7 +57,7 @@ export class ServiceController {
 
   static async activeService(request: Request,
     response: Response,
-    next: NextFunction): Promise<Response<ServiceDTO>> {
+    next: NextFunction): Promise<Response<void>> {
     return await asyncWrapper(async () => {
 
       if (!request.params.id) {

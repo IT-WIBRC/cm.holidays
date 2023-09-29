@@ -4,6 +4,7 @@ import { RoleService } from "../../services/Role.service";
 import { ApiError } from "../../middlewares/errors/Api";
 import { StatusCodes } from "http-status-codes";
 import { Role } from "../../entities/Role";
+import { RoleDTO } from "../../entities/types";
 
 export class RoleController {
   static async create(
@@ -30,7 +31,7 @@ export class RoleController {
       if (!roleToCreate) {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create this role");
       }
-      response.status(StatusCodes.CREATED).send(roleToCreate.id);
+      return response.status(StatusCodes.CREATED).send(roleToCreate.id);
     })(request, response, next);
   }
 
@@ -38,7 +39,7 @@ export class RoleController {
     request: Request,
     response: Response,
     next: NextFunction
-  ): Promise<string> {
+  ): Promise<Response<RoleDTO[]>> {
     return await asyncWrapper(async () => {
 
       const { isAdmin, isHumanResource } = response.locals.roles;

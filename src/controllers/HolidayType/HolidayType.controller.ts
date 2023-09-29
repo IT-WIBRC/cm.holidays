@@ -5,6 +5,7 @@ import { regulariseSpacesFrom } from "../../utils/commons";
 import { ApiError } from "../../middlewares/errors/Api";
 import { StatusCodes } from "http-status-codes";
 import { HolidayType } from "../../entities/HolidayType";
+import { HolidayTypeDTO } from "../../entities/types";
 
 export class HolidayTypeController {
 
@@ -35,7 +36,7 @@ export class HolidayTypeController {
       if (!holidayTypeToCreate) {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create this holiday type");
       }
-      response.status(StatusCodes.CREATED).send(holidayTypeToCreate.id);
+      return response.status(StatusCodes.CREATED).send(holidayTypeToCreate.id);
     })(request, response, next);
   }
 
@@ -43,11 +44,11 @@ export class HolidayTypeController {
     request: Request,
     response: Response,
     next: NextFunction
-  ): Promise<Response<string>> {
+  ): Promise<Response<HolidayTypeDTO[]>> {
     return await asyncWrapper(async () => {
       const holidayTypes: HolidayType[] = await HolidayTypeService.findAll();
 
-      response.status(StatusCodes.OK).json(holidayTypes);
+      return response.status(StatusCodes.OK).json(holidayTypes);
     })(request, response, next);
   }
 }
