@@ -14,11 +14,23 @@ export const userHasRoles = (
   response: Response,
   next: NextFunction
 ): void  => {
-  const userRoles = (request.auth as TokenPayload).infos.roles;
+  const {
+    infos:
+      {
+        roles: userRoles,
+        email
+      }
+    , id
+  } = request.auth as TokenPayload;
 
   response.locals.roles = {};
-  userRoles.forEach((userRole) => {
-    response.locals.roles[`is${toCamelCase(userRole.type as string)}`] = true;
+  response.locals.user = {
+    id,
+    email
+  };
+
+  userRoles.forEach((role) => {
+    response.locals.roles[`is${toCamelCase(role.type as string)}`] = true;
   });
 
   let finalVerdict: boolean;

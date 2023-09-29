@@ -42,7 +42,7 @@ export class PostController {
 
       newPost = await PostService.create(newPost);
 
-      response.status(StatusCodes.CREATED).send({
+      response.status(StatusCodes.CREATED).json({
         id: newPost.id
       });
 
@@ -73,7 +73,7 @@ export class PostController {
           isAdmin || !isHumanResource
         );
 
-      return response.status(StatusCodes.OK).send(posts);
+      return response.status(StatusCodes.OK).json(posts);
     })(request, response, next);
   }
 

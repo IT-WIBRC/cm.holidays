@@ -36,7 +36,7 @@ export class HolidayTypeController {
       if (!holidayTypeToCreate) {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create this holiday type");
       }
-      return response.status(StatusCodes.CREATED).send(holidayTypeToCreate.id);
+      return response.status(StatusCodes.CREATED).json(holidayTypeToCreate.id);
     })(request, response, next);
   }
 

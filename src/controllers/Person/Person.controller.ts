@@ -37,7 +37,7 @@ export class PersonController {
         );
       }
 
-      return response.status(200).send({
+      return response.status(200).json({
         id: person.id,
         token: Auth.generateToken(person)
       });
@@ -87,7 +87,7 @@ export class PersonController {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "User has failed to be create");
       }
 
-      return response.status(StatusCodes.CREATED).send(newUser.id);
+      return response.status(StatusCodes.CREATED).json(newUser.id);
     })(request, request, next);
   }
 }
