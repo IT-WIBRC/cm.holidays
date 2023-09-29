@@ -6,7 +6,7 @@ import { StatusCodes } from "http-status-codes";
 import { CompanyService } from "../../services/Company.service";
 import { Post } from "../../entities/Post";
 import { regulariseSpacesFrom } from "../../utils/commons";
-import { ServiceDTO } from "../../entities/types";
+import { PostDTO, ServiceDTO } from "../../entities/types";
 
 export class PostController {
   static async create(
@@ -110,6 +110,17 @@ export class PostController {
       await PostService.activate(post);
 
       return response.sendStatus(StatusCodes.NO_CONTENT);
+    })(request, response, next);
+  }
+
+  static async getAll(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response<PostDTO[]>> {
+    return await asyncWrapper(async () => {
+      const posts = await PostService.findAll();
+      return response.status(StatusCodes.OK).json(posts);
     })(request, response, next);
   }
 }

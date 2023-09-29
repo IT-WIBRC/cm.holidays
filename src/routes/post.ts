@@ -42,4 +42,14 @@ postRouter.put(
   PostController.activePost
 );
 
+postRouter.get(
+  "/all",
+  expressjwt({
+    secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
+    algorithms: [TOKEN_ENCRYPT_ALGO]
+  }),
+  userHasRoles(["ADMIN"]),
+  PostController.getAll
+);
+
 export { postRouter };
