@@ -114,7 +114,7 @@ export class EmployeeController extends PersonController {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Employee has failed to be create");
       }
 
-      return response.sendStatus(StatusCodes.CREATED);
+      return response.status(StatusCodes.CREATED).send(newEmployee.id);
     })(request, request, next);
   }
 }

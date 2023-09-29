@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import { AppDataSource } from "./data-source";
-import { personRouter, roleRouter, serviceRouter } from "./routes";
+import { holidayTypeRouter, personRouter, roleRouter, serviceRouter } from "./routes";
 import helmet from "helmet";
 import compression from "compression";
 import cors from "cors";
@@ -38,7 +38,8 @@ const initApp = async (): Promise<unknown> => {
     app.use("/user", personRouter)
       .use("/service", serviceRouter)
       .use("/post", postRouter)
-      .use("/role", roleRouter);
+      .use("/role", roleRouter)
+      .use("/holidayType", holidayTypeRouter);
 
     app.use((request: Request, response: Response, next: NextFunction) =>
       next(new NotFound(`Requested path ${request.path} not found`))

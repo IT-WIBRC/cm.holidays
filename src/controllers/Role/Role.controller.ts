@@ -22,11 +22,15 @@ export class RoleController {
         throw new ApiError(StatusCodes.CONFLICT, "Role already exist");
       }
 
-      const roleToCreate = new Role();
+      let roleToCreate = new Role();
       roleToCreate.type = type;
       roleToCreate.description = description;
 
-      await RoleService.create(roleToCreate);
+      roleToCreate = await RoleService.create(roleToCreate);
+      if (!roleToCreate) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create this role");
+      }
+      response.status(StatusCodes.CREATED).send(roleToCreate.id);
     })(request, response, next);
   }
 
