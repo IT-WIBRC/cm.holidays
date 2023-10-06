@@ -20,4 +20,13 @@ export class HolidayTypeService {
   static async findAll(): Promise<HolidayType[]> {
     return this.holidayTypeManager.find();
   }
+
+  static async findById(typeId: string): Promise<HolidayType | null> {
+    return this.holidayTypeManager.findOne({
+      where: {
+        id: typeId
+      }
+    });
+  }
+
 }

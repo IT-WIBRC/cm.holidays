@@ -24,4 +24,22 @@ export class HolidayRequestService {
       }
     });
   }
+
+  static async create(holidayRequest: HolidayRequest): Promise<HolidayRequest> {
+    return this.holidayRequestRepository.save(holidayRequest);
+  }
+
+  static async findByUserIdAndStartingDate(
+    userId: string,
+    startingDate: string
+  ): Promise<HolidayRequest | null> {
+    return this.holidayRequestRepository.findOne({
+      where: {
+        employee: {
+          id: userId
+        },
+        startingDate
+      }
+    });
+  }
 }

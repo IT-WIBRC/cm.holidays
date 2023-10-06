@@ -1,4 +1,5 @@
 import { checkSchema } from "express-validator";
+import dayjs from "dayjs";
 
 const emailValidation = checkSchema({
   email: {
@@ -13,6 +14,12 @@ const emailValidation = checkSchema({
         allow_utf8_local_part: true,
         require_tld: true,
         ignore_max_length: true
+      }
+    },
+    normalizeEmail: {
+      options: {
+        gmail_remove_subaddress: true,
+        all_lowercase: true
       }
     }
   }
@@ -133,7 +140,7 @@ const assertPostCreation = checkSchema({
       errorMessage: "Service field is empty"
     },
     exists: {
-      errorMessage: "Malformed request (service doesn't exist for this post)"
+      errorMessage: "Malformed request (service type is missing)"
     }
   },
   "service.id": {
@@ -180,6 +187,91 @@ const postsValidation = checkSchema({
   }
 });
 
+const assertHolidayRequestCreation = checkSchema({
+  type: {
+    notEmpty: {
+      options: {
+        ignore_whitespace: false
+      },
+      errorMessage: "Holiday Type field is empty"
+    },
+    exists: {
+      errorMessage: "Malformed request (Holiday type is missing)"
+    }
+  },
+  "type.id": {
+    exists: {
+      errorMessage: "The id field is empty"
+    },
+    isUUID: {
+      errorMessage: "Wrong id is not an uuid"
+    }
+  },
+  startingDate: {
+    notEmpty: {
+      errorMessage: "The starting date field is empty"
+    },
+    exists: {
+      errorMessage: "The starting date field is required"
+    },
+    trim: true,
+    isDate: {
+      errorMessage: "The starting date must be a date",
+      options: {
+        strictMode: true,
+        format: "YYYY-MM-DD"
+      }
+    },
+    custom: {
+      errorMessage: "The starting date must be higher than the actual date",
+      options: (value) => dayjs().isBefore(value)
+    }
+  },
+  endingDate: {
+    notEmpty: {
+      errorMessage: "The ending date field is empty"
+    },
+    exists: {
+      errorMessage: "The ending date field is required"
+    },
+    trim: true,
+    isDate: {
+      errorMessage: "The ending date field must be a date",
+      options: {
+        strictMode: true,
+        format: "YYYY-MM-DD"
+      }
+    },
+    custom: {
+      errorMessage: "The ending date must be higher than the starting date",
+      options: (value, { req: { body } }) =>
+        dayjs(value).isAfter(body.startingDate)
+    }
+  },
+  returningDate: {
+    notEmpty: {
+      errorMessage: "The returning date field is empty"
+    },
+    exists: {
+      errorMessage: "The returning date is required"
+    },
+    trim: true,
+    isDate: {
+      errorMessage: "The returning date must be a date",
+      options: {
+        strictMode: true,
+        format: "YYYY-MM-DD"
+      }
+    },
+    custom: {
+      errorMessage: "The returning date date must be higher than the ending date",
+      options: (value, { req: { body } }) =>
+        dayjs(value).isAfter(body.endingDate)
+
+    }
+  }
+});
+
 export {
   passwordValidation,
   emailValidation,
@@ -191,4 +283,8 @@ export {
   postsValidation
 };
 
-export { assertRequiredLoginFieldsAreNotEmpty, assertPostCreation };
+export {
+  assertRequiredLoginFieldsAreNotEmpty,
+  assertPostCreation,
+  assertHolidayRequestCreation
+};
