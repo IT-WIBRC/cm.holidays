@@ -25,6 +25,17 @@ export class PersonService {
       .getOne();
   }
 
+  static async findUserById(userId: string): Promise<Employee | null> {
+    return this.personManager.findOne({
+      where: {
+        id: userId
+      },
+      relations: {
+        holidays: true
+      }
+    });
+  }
+
   static async create(person: Employee): Promise<Employee | null> {
     return this.personManager.save(person);
   }
