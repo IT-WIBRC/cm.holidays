@@ -734,6 +734,36 @@ paths:
           description: HOLIDAY-REQUEST-4000
         401:
           description: HOLIDAY-REQUEST-4001
+  /holidayRequest/{id}/status/{status}:
+    put:
+      tags:
+        - HolidayRequest
+      summary: update a holiday request
+      description: update a holiday request
+      operationId: updateHolidayRequest
+      parameters:
+        - name: id
+          in: path
+          description: holiday request id to validate
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: path
+          description: holiday status to apply
+          required: true
+          schema:
+            $ref: '#/components/schemas/HolidayStatusDTO'
+      responses:
+        204:
+          description: successful operation
+        400:
+          description: HOLIDAY-REQUEST-4000
+        401:
+          description: HOLIDAY-REQUEST-4001
+        404:
+          description: HOLIDAY-REQUEST-4004
 
   /holidayType/add:
     post:
