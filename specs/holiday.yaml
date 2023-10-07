@@ -427,8 +427,12 @@ paths:
                   $ref: '#/components/schemas/EmployeeDTO'
         400:
           description: HOLIDAY-EMPLOYEE-4000
+        404:
+          description: HOLIDAY-EMPLOYEE-4004
         401:
           description: HOLIDAY-EMPLOYEE-4001
+        409:
+          description: HOLIDAY-EMPLOYEE-4009
     put:
       tags:
         - Employee

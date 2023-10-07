@@ -27,11 +27,23 @@ export class PersonService {
 
   static async findUserById(userId: string): Promise<Employee | null> {
     return this.personManager.findOne({
+      select: [
+        "id",
+        "email",
+        "roles",
+        "lastName",
+        "firstname",
+        "createdAt",
+        "holidays",
+        "posts",
+        "setting"
+      ],
       where: {
         id: userId
       },
       relations: {
-        holidays: true
+        holidays: true,
+        posts: true
       }
     });
   }
