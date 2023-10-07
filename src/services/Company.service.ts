@@ -30,7 +30,7 @@ export class CompanyService {
   ): Promise<Service[]> {
     return this.serviceManager.find({
       select: ["id", "description", "name", "createdAt", "isActive"],
-      where: isAdmin ? {} : { isActive: !isAdmin },
+      where: isAdmin ? undefined : { isActive: !isAdmin },
       relations: {
         posts: withRelation
       }

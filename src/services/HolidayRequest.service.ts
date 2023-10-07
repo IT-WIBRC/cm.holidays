@@ -42,4 +42,18 @@ export class HolidayRequestService {
       }
     });
   }
+
+  static async findById(id: string): Promise<HolidayRequest | null> {
+    return this.holidayRequestRepository.findOne({
+      where: {
+        id
+      }
+    });
+  }
+
+  static async update(holidayRequest: HolidayRequest): Promise<void> {
+    this.holidayRequestRepository.update({
+      id: holidayRequest.id
+    }, holidayRequest);
+  }
 }

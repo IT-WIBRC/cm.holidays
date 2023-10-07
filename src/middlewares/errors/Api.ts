@@ -32,7 +32,7 @@ class ErrorHandler {
         stack:
           process.env.NODE_ENV === "development"
             ? err.stack
-            : "Please try later"
+            : undefined
       });
       next();
     };

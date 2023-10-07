@@ -97,4 +97,74 @@ export class HolidayRequestController {
 
     })(request, response, next);
   }
+
+  static async updateStatus(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<HolidayRequestDTO[]> {
+    return await asyncWrapper(async (): Promise<Response<string>> => {
+      const { id, status } = request.params;
+      const {
+        isAdmin,
+        isHumanResource
+      } = response.locals.roles;
+
+      const isKnownStatus = Object.keys(HolidayStatusDTO)
+        .map((status) => status.toLowerCase())
+        .includes(status.toLowerCase());
+
+      if (
+        !isKnownStatus
+        || status.toLowerCase() === HolidayStatusDTO.DRAFT.toLowerCase()
+        || !id
+      ) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-REQUEST-4000");
+      }
+
+      const existingHolidayRequest = await HolidayRequestService.findById(id);
+
+      if (!existingHolidayRequest) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-REQUEST-4004");
+      }
+
+      const adminStatus = [
+        HolidayStatusDTO.APPROVED.toLowerCase(),
+        HolidayStatusDTO.REJECTED.toLowerCase()
+      ];
+
+      const otherStatus = [
+        HolidayStatusDTO.PENDING.toLowerCase(),
+        HolidayStatusDTO.DRAFT.toLowerCase()
+      ];
+      const cannotMakeBackOperation =
+        adminStatus.includes(existingHolidayRequest.status.toLowerCase())
+        && otherStatus.includes(status.toLowerCase());
+
+      if (cannotMakeBackOperation) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-REQUEST-4000");
+      }
+
+      const isAdminOperation = adminStatus.includes(status.toLowerCase());
+
+      const isOtherOperation =
+        HolidayStatusDTO.PENDING.toLowerCase() === status.toLowerCase();
+
+      const canMakeTheStatusChanged =
+        (isAdminOperation && (isAdmin || isHumanResource))
+        || isOtherOperation;
+
+      if (!canMakeTheStatusChanged) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, "HOLIDAY-REQUEST-4001");
+      }
+
+      existingHolidayRequest.status =
+        HolidayStatusDTO[status as keyof typeof HolidayStatusDTO];
+
+      await HolidayRequestService.update(existingHolidayRequest);
+
+      return response.status(StatusCodes.OK).json(existingHolidayRequest.id);
+
+    })(request, response, next);
+  }
 }
