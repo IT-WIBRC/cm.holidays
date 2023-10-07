@@ -167,4 +167,60 @@ export class HolidayRequestController {
 
     })(request, response, next);
   }
+
+  static async update(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<void> {
+    return await asyncWrapper(async (): Promise<void> => {
+      const { id } = response.locals.user;
+      const { id: holidayId } = request.params;
+      const {
+        startingDate,
+        endingDate,
+        returningDate,
+        description,
+        type
+      } = request.body;
+
+      if (!holidayId) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-REQUEST-4000");
+      }
+
+      const existingHolidayRequest =
+        await HolidayRequestService.findById(holidayId);
+
+      if (!existingHolidayRequest) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "HOLIDAY-REQUEST-4004");
+      }
+
+      if (existingHolidayRequest.status !== HolidayStatusDTO.DRAFT) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-REQUEST-3000");
+      }
+
+      const existingEmployee = await PersonService.findUserById(id);
+      if (!existingEmployee) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-REQUEST-4009");
+      }
+
+      if (type && type.id) {
+        const existingHolidayType = await HolidayTypeService.findById(type.id);
+
+        if (!existingHolidayType) {
+          throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-REQUEST-4009");
+        }
+        existingHolidayRequest.type = existingHolidayType;
+      }
+
+      if (returningDate) existingHolidayRequest.returningDate = returningDate;
+      if (endingDate) existingHolidayRequest.endingDate = endingDate;
+      if (startingDate) existingHolidayRequest.startingDate = startingDate;
+      if (description) existingHolidayRequest.description = description;
+
+      await HolidayRequestService.update(existingHolidayRequest);
+
+      response.sendStatus(StatusCodes.NO_CONTENT);
+    })(request, response, next);
+  }
 }

@@ -714,6 +714,12 @@ paths:
           description: successful operation
         404:
           description: HOLIDAY-REQUEST-4004
+        400:
+          description: HOLIDAY-REQUEST-4000
+        401:
+          description: HOLIDAY-REQUEST-4001
+        409:
+          description: HOLIDAY-REQUEST-4009 | HOLIDAY-REQUEST-3000
   /holidayRequest/all:
     get:
       tags:
@@ -965,6 +971,10 @@ components:
         name:
           type: string
           description: holiday type name
+        holidaysRequests:
+          type: array
+          items:
+            $ref: '#/components/schemas/HolidayRequestDTO'
     HolidayStatusDTO:
       type: string
       enum:

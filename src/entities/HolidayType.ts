@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { HolidayTypeDTO  } from "./types";
+import { HolidayRequest } from "./HolidayRequest";
 
 @Entity({
   name: "t_holidayType"
@@ -25,4 +26,7 @@ export class HolidayType implements HolidayTypeDTO {
     nullable: true
   })
   declare description: string;
+
+  @OneToMany(() => HolidayRequest, (holidayRequest) => holidayRequest.type)
+  declare holidaysRequests: HolidayRequest[];
 }

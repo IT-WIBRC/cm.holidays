@@ -14,24 +14,25 @@ holidayRequestRouter.use(
   expressjwt({
     secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
     algorithms: [TOKEN_ENCRYPT_ALGO]
-  })
+  }),
+  userHasRoles(["ADMIN", "EMPLOYEE", "HUMAN_RESOURCE"], false)
 )
   .get(
     "/all",
-    userHasRoles(["ADMIN", "EMPLOYEE", "HUMAN_RESOURCE"], false),
     HolidayRequestController.getAll
   )
   .post(
     "/add",
-    userHasRoles(["ADMIN", "EMPLOYEE", "HUMAN_RESOURCE"], false),
     assertHolidayRequestCreation,
     handleFieldsValidation,
     HolidayRequestController.create
   )
   .put(
     "/:id/status/:status",
-    userHasRoles(["ADMIN", "EMPLOYEE", "HUMAN_RESOURCE"], false),
     HolidayRequestController.updateStatus
+  ).put(
+    "/:id",
+    HolidayRequestController.update
   );
 
 export { holidayRequestRouter };
