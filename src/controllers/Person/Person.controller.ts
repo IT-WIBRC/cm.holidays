@@ -90,4 +90,24 @@ export class PersonController {
       return response.status(StatusCodes.CREATED).json(newUser.id);
     })(request, request, next);
   }
+
+  static async getById(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) : Promise<Response<EmployeeDTO>> {
+    return await asyncWrapper(async (): Promise<Response<EmployeeDTO>> => {
+      const { id } = request.params;
+      if (!id) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-EMPLOYEE-4009");
+      }
+
+      const person = await PersonService.findUserById(id);
+      if (!person) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "HOLIDAY-EMPLOYEE-4004");
+      }
+
+      return response.status(StatusCodes.OK).json(person);
+    })(request, response, next);
+  }
 }
