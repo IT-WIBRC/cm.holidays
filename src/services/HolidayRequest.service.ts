@@ -47,6 +47,9 @@ export class HolidayRequestService {
     return this.holidayRequestRepository.findOne({
       where: {
         id
+      },
+      relations: {
+        employee: true
       }
     });
   }
