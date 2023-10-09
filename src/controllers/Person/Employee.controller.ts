@@ -11,16 +11,16 @@ import { Employee } from "../../entities/Employee";
 import { regulariseSpacesFrom } from "../../utils/commons";
 import { PostService } from "../../services/Post.service";
 import { Post } from "../../entities/Post";
-import { USER_ROLE } from "../../entities/types";
+import { EmployeeDTOForCreation, EmployeeTokenDTO, USER_ROLE } from "../../entities/types";
 
 export class EmployeeController extends PersonController {
   constructor() {
     super();
   }
 
-  static async create(request: Request,
+  static async create(request: Request<EmployeeDTOForCreation>,
     response: Response,
-    next: NextFunction): Promise<string> {
+    next: NextFunction): Promise<EmployeeTokenDTO> {
     return asyncWrapper(async () => {
       const {
         firstname,
@@ -93,7 +93,7 @@ export class EmployeeController extends PersonController {
       }
 
       const userSetting = await SettingService.create({
-        defaultEmailNotification: email
+        defaultEmailNotification: regulariseSpacesFrom(email, "").toLowerCase()
       });
 
       if (!userSetting) {
