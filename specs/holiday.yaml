@@ -141,17 +141,17 @@ paths:
             type: string
             format: uuid
       requestBody:
-          description: Service object that need to be update
-          required: true
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ServiceDTO'
+        description: Service object that need to be update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceDTO'
       responses:
-          204:
-            description: successful operation
-          404:
-            description: HOLIDAY-SERVICE-4004
+        204:
+          description: successful operation
+        404:
+          description: HOLIDAY-SERVICE-4004
 
   /post/add:
     post:
@@ -341,15 +341,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EmployeeDTO'
+              $ref: '#/components/schemas/EmployeeDTOForCreation'
       responses:
         200:
           description: successful operation
           content:
             application/json:
               schema:
-                type: string
-                format: uuid
+                $ref: '#/components/schemas/EmployeeTokenDTO'
         409:
           description: HOLIDAY-EMPLOYEE-4009
         401:
@@ -389,7 +388,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EmployeeDTO'
+              $ref: '#/components/schemas/EmployeeDTOForLogin'
       responses:
         200:
           description: successful operation
@@ -427,8 +426,12 @@ paths:
                   $ref: '#/components/schemas/EmployeeDTO'
         400:
           description: HOLIDAY-EMPLOYEE-4000
+        404:
+          description: HOLIDAY-EMPLOYEE-4004
         401:
           description: HOLIDAY-EMPLOYEE-4001
+        409:
+          description: HOLIDAY-EMPLOYEE-4009
     put:
       tags:
         - Employee
@@ -449,7 +452,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EmployeeDTO'
+              $ref: '#/components/schemas/EmployeeDTOForUpdate'
       responses:
         204:
           description: successful operation
@@ -714,6 +717,12 @@ paths:
           description: successful operation
         404:
           description: HOLIDAY-REQUEST-4004
+        400:
+          description: HOLIDAY-REQUEST-4000
+        401:
+          description: HOLIDAY-REQUEST-4001
+        409:
+          description: HOLIDAY-REQUEST-4009 | HOLIDAY-REQUEST-3000
   /holidayRequest/all:
     get:
       tags:
@@ -734,6 +743,36 @@ paths:
           description: HOLIDAY-REQUEST-4000
         401:
           description: HOLIDAY-REQUEST-4001
+  /holidayRequest/{id}/status/{status}:
+    put:
+      tags:
+        - HolidayRequest
+      summary: update a holiday request
+      description: update a holiday request
+      operationId: updateHolidayRequest
+      parameters:
+        - name: id
+          in: path
+          description: holiday request id to validate
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: path
+          description: holiday status to apply
+          required: true
+          schema:
+            $ref: '#/components/schemas/HolidayStatusDTO'
+      responses:
+        204:
+          description: successful operation
+        400:
+          description: HOLIDAY-REQUEST-4000
+        401:
+          description: HOLIDAY-REQUEST-4001
+        404:
+          description: HOLIDAY-REQUEST-4004
 
   /holidayType/add:
     post:
@@ -798,9 +837,6 @@ components:
         lastName:
           type: string
           description: user lastname
-        password:
-          type: string
-          description: user password
         email:
           type: string
           description: user email
@@ -815,7 +851,7 @@ components:
         roles:
           type: array
           items:
-           $ref: '#/components/schemas/RoleDTO'
+            $ref: '#/components/schemas/RoleDTO'
         holidays:
           type: array
           description: holidays request for a user
@@ -827,6 +863,78 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PostDTO'
+    EmployeeDTOForCreation:
+      type: object
+      properties:
+        firstname:
+          type: string
+          description: user firstname
+          required: true
+        lastName:
+          type: string
+          description: user lastname
+          required: true
+        password:
+          type: string
+          description: user password
+          required: true
+        email:
+          type: string
+          description: user email
+          required: true
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoleDTO'
+          required: true
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostDTO'
+          required: true
+    EmployeeDTOForUpdate:
+      type: object
+      properties:
+        firstname:
+          type: string
+          description: user firstname
+        lastName:
+          type: string
+          description: user lastname
+        email:
+          type: string
+          description: user email
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoleDTO'
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostDTO'
+    EmployeeDTOForLogin:
+      type: object
+      properties:
+        email:
+          type: string
+          description: employee email
+          required: true
+        password:
+          type: string
+          description: user password
+          required: true
+    EmployeeTokenDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: identifier the user id
+          required: true
+        token:
+          type: string
+          description: token use to have access to all operations need inside
+          required: true
     RoleDTO:
       type: object
       properties:
@@ -935,6 +1043,10 @@ components:
         name:
           type: string
           description: holiday type name
+        holidaysRequests:
+          type: array
+          items:
+            $ref: '#/components/schemas/HolidayRequestDTO'
     HolidayStatusDTO:
       type: string
       enum:

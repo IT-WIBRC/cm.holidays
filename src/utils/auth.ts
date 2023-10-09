@@ -1,10 +1,9 @@
 import { compare, hash } from "bcrypt";
-import { TOKEN_ERROR, TokenPayload } from "./types";
-import { Secret, sign, verify } from "jsonwebtoken";
+import { TokenPayload } from "./types";
+import { Secret, sign } from "jsonwebtoken";
 import { EmployeeDTO } from "../entities/types";
 import { DEFAULT_TOKEN_KEY, TOKEN_ENCRYPT_ALGO } from "./constants";
 
-type VerifyToken = TokenPayload | string;
 export class Auth {
   private static SALBOUND: number = 10;
   private static TOKEN_KEY: Secret = process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY;
@@ -39,29 +38,5 @@ export class Auth {
       algorithm: TOKEN_ENCRYPT_ALGO,
       expiresIn: time
     });
-  }
-
-  static parseToken (token: string): VerifyToken  {
-    let parsedToken: VerifyToken = "";
-    let errorTokenMessage: TOKEN_ERROR = TOKEN_ERROR.ANY;
-    verify(token, this.TOKEN_KEY, (err, parsed): void => {
-      if (err) {
-        switch (err.name) {
-          case "TokenExpiredError":
-            errorTokenMessage = TOKEN_ERROR.EXPIRED;
-            break;
-          case "JsonWebTokenError":
-            errorTokenMessage = TOKEN_ERROR.INVALID;
-            break;
-          case "NotBeforeError":
-            errorTokenMessage = TOKEN_ERROR.ACTIVE;
-            break;
-          default:
-            errorTokenMessage = TOKEN_ERROR.OTHER;
-            break;
-        }
-      } else parsedToken = parsed as VerifyToken;
-    });
-    return errorTokenMessage ? errorTokenMessage : parsedToken;
   }
 }

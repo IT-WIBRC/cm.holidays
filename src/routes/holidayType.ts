@@ -28,7 +28,7 @@ holidayTypeRouter.get(
     secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
     algorithms: [TOKEN_ENCRYPT_ALGO]
   }),
-  userHasRoles(["ADMIN", "HUMAN_RESOURCE"], false),
+  userHasRoles(["ADMIN", "HUMAN_RESOURCE", "EMPLOYEE"], false),
   HolidayTypeController.getAll
 );
 

@@ -1,7 +1,7 @@
 import { checkSchema } from "express-validator";
 import dayjs from "dayjs";
 
-const emailValidation = checkSchema({
+const emailSchema = {
   email: {
     exists: {
       errorMessage: "Email is required"
@@ -10,20 +10,27 @@ const emailValidation = checkSchema({
       bail: true,
       errorMessage: "Email is in wrong format",
       options: {
-        allow_ip_domain: false,
         allow_utf8_local_part: true,
         require_tld: true,
-        ignore_max_length: true
+        ignore_max_length: true,
       }
     },
     normalizeEmail: {
       options: {
-        gmail_remove_subaddress: true,
-        all_lowercase: true
+        gmail_remove_subaddress: false,
+        gmail_lowercase: true,
+        gmail_remove_dots: false,
+        gmail_convert_googlemaildotcom: true,
+        outlookdotcom_lowercase: true,
+        outlookdotcom_remove_subaddress: true,
+        yahoo_lowercase: true,
+        icloud_lowercase: true,
+        icloud_remove_subaddress: true
       }
     }
   }
-});
+};
+const emailValidation = checkSchema(emailSchema);
 
 const passwordValidation = checkSchema({
   password: {
@@ -76,12 +83,7 @@ const lastnameValidation = checkSchema({
 });
 
 const assertRequiredLoginFieldsAreNotEmpty = checkSchema({
-  email: {
-    exists: {
-      errorMessage: "Email is required"
-    },
-    trim: true
-  },
+  ...emailSchema,
   password: {
     exists: {
       errorMessage: "Password is required"

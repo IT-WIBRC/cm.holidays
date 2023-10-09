@@ -9,15 +9,17 @@ import {
   PrimaryGeneratedColumn, UpdateDateColumn
 } from "typeorm";
 import { Auth } from "../utils/auth";
-import { EmployeeDTO } from "./types";
+import { EmployeeDTO, EmployeeDTOForCreation } from "./types";
 import { HolidayRequest } from "./HolidayRequest";
 import { Setting } from "./Setting";
 import { Role } from "./Role";
 import { Post } from "./Post";
+
+type EmployeeType = EmployeeDTO & EmployeeDTOForCreation;
 @Entity({
   name: "t_employee"
 })
-export class Employee implements EmployeeDTO {
+export class Employee implements EmployeeType {
     @PrimaryGeneratedColumn("uuid")
     @Column({
       primary: true,

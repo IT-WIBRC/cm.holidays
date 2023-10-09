@@ -1,4 +1,9 @@
-import { EmployeeDTO } from "../../entities/types";
+import {
+  EmployeeDTOForCreation,
+  EmployeeTokenDTO,
+  EmployeeDTOForLogin,
+  EmployeeDTO
+} from "../../entities/types";
 import { NextFunction, Request, Response } from "express";
 import { PersonService } from "../../services/Person.service";
 import { Auth } from "../../utils/auth";
@@ -13,10 +18,10 @@ import { regulariseSpacesFrom } from "../../utils/commons";
 
 export class PersonController {
   static async login(
-    request: Request,
+    request: Request<EmployeeDTOForLogin>,
     response: Response,
     next: NextFunction
-  ): Promise<Response<EmployeeDTO>> {
+  ): Promise<Response<EmployeeTokenDTO>> {
     return await asyncWrapper(async () => {
       const person = await PersonService
         .findByEmail(regulariseSpacesFrom(request.body.email, ""));
@@ -44,10 +49,10 @@ export class PersonController {
     })(request, response, next);
   }
 
-  static async create(request: Request,
+  static async create(request: Request<EmployeeDTOForCreation>,
     response: Response,
-    next: NextFunction): Promise<string> {
-    return asyncWrapper(async () => {
+    next: NextFunction): Promise<EmployeeTokenDTO> {
+    return asyncWrapper(async (): Promise<Response<EmployeeTokenDTO>> => {
       const { firstname, lastName, password, email, roles } = request.body;
 
       const person = await PersonService.findByEmail(email);
@@ -71,7 +76,7 @@ export class PersonController {
       }
 
       const setting = await SettingService.create({
-        defaultEmailNotification: email
+        defaultEmailNotification: regulariseSpacesFrom(email, "").toLowerCase()
       });
 
       let newUser: Employee | null = new Employee();
@@ -87,7 +92,31 @@ export class PersonController {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "User has failed to be create");
       }
 
-      return response.status(StatusCodes.CREATED).json(newUser.id);
+      return response.status(StatusCodes.CREATED).json({
+        id: newUser.id,
+        token: Auth.generateToken(newUser)
+      });
     })(request, request, next);
+  }
+
+  static async getById(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) : Promise<Response<EmployeeDTO>> {
+    return await asyncWrapper(
+      async (): Promise<Response<EmployeeDTOForCreation>> => {
+        const { id } = request.params;
+        if (!id) {
+          throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-EMPLOYEE-4009");
+        }
+
+        const person = await PersonService.findUserById(id);
+        if (!person) {
+          throw new ApiError(StatusCodes.NOT_FOUND, "HOLIDAY-EMPLOYEE-4004");
+        }
+
+        return response.status(StatusCodes.OK).json(person);
+      })(request, response, next);
   }
 }
