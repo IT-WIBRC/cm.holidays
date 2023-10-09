@@ -1,8 +1,17 @@
 import { components } from "./DTO";
 
 //EmployeeController
+type EmployeeForCreation = components["schemas"]["EmployeeDTOForCreation"];
+type EmployeeForLogin = components["schemas"]["EmployeeDTOForLogin"];
+type EmployeeForUpdate = components["schemas"]["EmployeeDTOForUpdate"];
 type EmployeeType = components["schemas"]["EmployeeDTO"];
+type EmployeeToken = components["schemas"]["EmployeeTokenDTO"];
+
+interface EmployeeDTOForCreation extends EmployeeForCreation {}
+interface EmployeeTokenDTO extends EmployeeToken {}
 interface EmployeeDTO extends EmployeeType {}
+interface EmployeeDTOForLogin extends EmployeeForLogin {}
+interface EmployeeDTOForUpdate extends EmployeeForUpdate {}
 
 //Holiday Request
 type HolidayRequestType = components["schemas"]["HolidayRequestDTO"];
@@ -41,7 +50,11 @@ interface SettingDTO extends Setting {}
 
 // EXPORTS TYPE
 export { 
+  EmployeeDTOForCreation,
+  EmployeeTokenDTO,
   EmployeeDTO,
+  EmployeeDTOForLogin,
+  EmployeeDTOForUpdate,
   HolidayRequestDTO,
   ServiceDTO,
   PostDTO,
