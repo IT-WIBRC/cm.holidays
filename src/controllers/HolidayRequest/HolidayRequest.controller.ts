@@ -1,4 +1,9 @@
-import { HolidayRequestDTO, HolidayStatusDTO } from "../../entities/types";
+import {
+  COMMONS_ERRORS_CODES, EMPLOYEE_ERRORS_CODES, HOLIDAY_REQUEST_ERRORS_CODES,
+  HOLIDAY_TYPE_ERRORS_CODES,
+  HolidayRequestDTO,
+  HolidayStatusDTO
+} from "../../entities/types";
 import { asyncWrapper } from "../requestHanlder";
 import { NextFunction, Request, Response } from "express";
 import { PersonService } from "../../services/Person.service";
@@ -28,7 +33,8 @@ export class HolidayRequestController {
         const existingUser = await PersonService.findByEmail(email);
 
         if (!existingUser) {
-          throw new ApiError(StatusCodes.BAD_REQUEST, "Unknown user");
+          throw new ApiError(StatusCodes.NOT_FOUND,
+            COMMONS_ERRORS_CODES.NOT_FOUND);
         }
 
         const holidayRequests: HolidayRequest[] = await HolidayRequestService
@@ -63,13 +69,15 @@ export class HolidayRequestController {
       const existingEmployee = await PersonService.findUserById(id);
 
       if (!existingEmployee) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Unknown User");
+        throw new ApiError(StatusCodes.NOT_FOUND,
+          COMMONS_ERRORS_CODES.NOT_FOUND);
       }
 
       const existingHolidayType = await HolidayTypeService.findById(type.id);
 
       if (!existingHolidayType) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Unknown User");
+        throw new ApiError(StatusCodes.NOT_FOUND,
+          HOLIDAY_TYPE_ERRORS_CODES.NOT_FOUND);
       }
 
       const holidayRequestsWithSameStartingDate =
@@ -77,7 +85,8 @@ export class HolidayRequestController {
           .findByUserIdAndStartingDate(id, startingDate);
 
       if (holidayRequestsWithSameStartingDate) {
-        throw new ApiError(StatusCodes.CONFLICT, "There is another holiday with the same starting date");
+        throw new ApiError(StatusCodes.CONFLICT,
+          HOLIDAY_REQUEST_ERRORS_CODES.STARTING_DATE_ALREADY_EXIST);
       }
 
       let newHolidayRequest = new HolidayRequest();
@@ -92,7 +101,8 @@ export class HolidayRequestController {
       newHolidayRequest = await HolidayRequestService.create(newHolidayRequest);
 
       if (!newHolidayRequest) {
-        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to created due to the server");
+        throw new ApiError(StatusCodes.CONFLICT,
+          COMMONS_ERRORS_CODES.FAILED_OPERATION);
       }
 
       return response.status(StatusCodes.CREATED).json(newHolidayRequest.id);
@@ -121,24 +131,28 @@ export class HolidayRequestController {
         || status.toLowerCase() === HolidayStatusDTO.DRAFT.toLowerCase()
         || !id
       ) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-REQUEST-4000");
+        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+          COMMONS_ERRORS_CODES.UNPROCESSABLE_OPERATION);
       }
 
       const existingHolidayRequest = await HolidayRequestService.findById(id);
 
       if (!existingHolidayRequest) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-REQUEST-4004");
+        throw new ApiError(StatusCodes.CONFLICT,
+          HOLIDAY_REQUEST_ERRORS_CODES.NOT_FOUND);
       }
 
       const existingEmployee = await PersonService.findUserById(userId);
 
       if (!existingEmployee) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-EMPLOYEE-4004");
+        throw new ApiError(StatusCodes.NOT_FOUND,
+          COMMONS_ERRORS_CODES.NOT_FOUND);
       }
 
       if (existingHolidayRequest.status === HolidayStatusDTO.DRAFT
         && existingHolidayRequest.employee.id !== existingEmployee.id) {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, "HOLIDAY-EMPLOYEE-4001");
+        throw new ApiError(StatusCodes.UNAUTHORIZED,
+          EMPLOYEE_ERRORS_CODES.UNAUTHORIZED);
       }
 
       const adminStatus = [
@@ -155,7 +169,8 @@ export class HolidayRequestController {
         && otherStatus.includes(status.toLowerCase());
 
       if (cannotMakeBackOperation) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-REQUEST-4000");
+        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+          COMMONS_ERRORS_CODES.UNPROCESSABLE_OPERATION);
       }
 
       const isAdminOperation = adminStatus.includes(status.toLowerCase());
@@ -168,12 +183,14 @@ export class HolidayRequestController {
         || isOtherOperation;
 
       if (!canMakeTheStatusChanged) {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, "HOLIDAY-REQUEST-4001");
+        throw new ApiError(StatusCodes.UNAUTHORIZED,
+          EMPLOYEE_ERRORS_CODES.UNAUTHORIZED);
       }
 
       if (isAdminOperation
         && existingHolidayRequest.status === HolidayStatusDTO.DRAFT) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-REQUEST-4000");
+        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+          COMMONS_ERRORS_CODES.UNPROCESSABLE_OPERATION);
       }
 
       const prevStatus = existingHolidayRequest.status;
@@ -212,7 +229,6 @@ export class HolidayRequestController {
     next: NextFunction
   ): Promise<void> {
     return await asyncWrapper(async (): Promise<void> => {
-      const { id } = response.locals.user;
       const { id: holidayId } = request.params;
       const {
         startingDate,
@@ -222,31 +238,26 @@ export class HolidayRequestController {
         type
       } = request.body;
 
-      if (!holidayId) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-REQUEST-4000");
-      }
 
       const existingHolidayRequest =
         await HolidayRequestService.findById(holidayId);
 
       if (!existingHolidayRequest) {
-        throw new ApiError(StatusCodes.NOT_FOUND, "HOLIDAY-REQUEST-4004");
+        throw new ApiError(StatusCodes.NOT_FOUND,
+          COMMONS_ERRORS_CODES.NOT_FOUND);
       }
 
       if (existingHolidayRequest.status !== HolidayStatusDTO.DRAFT) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-REQUEST-3000");
-      }
-
-      const existingEmployee = await PersonService.findUserById(id);
-      if (!existingEmployee) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-REQUEST-4009");
+        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+          COMMONS_ERRORS_CODES.UNPROCESSABLE_OPERATION);
       }
 
       if (type && type.id) {
         const existingHolidayType = await HolidayTypeService.findById(type.id);
 
         if (!existingHolidayType) {
-          throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-REQUEST-4009");
+          throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+            COMMONS_ERRORS_CODES.UNPROCESSABLE_OPERATION);
         }
         existingHolidayRequest.type = existingHolidayType;
       }

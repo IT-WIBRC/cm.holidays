@@ -4,7 +4,7 @@ import { RoleService } from "../../services/Role.service";
 import { ApiError } from "../../middlewares/errors/Api";
 import { StatusCodes } from "http-status-codes";
 import { Role } from "../../entities/Role";
-import { RoleDTO } from "../../entities/types";
+import { COMMONS_ERRORS_CODES, RoleDTO } from "../../entities/types";
 
 export class RoleController {
   static async create(
@@ -20,7 +20,8 @@ export class RoleController {
       const role = await RoleService.findRoleByType(type);
 
       if (role) {
-        throw new ApiError(StatusCodes.CONFLICT, "Role already exist");
+        throw new ApiError(StatusCodes.CONFLICT,
+          COMMONS_ERRORS_CODES.CONFLICTS);
       }
 
       let roleToCreate = new Role();
@@ -29,7 +30,8 @@ export class RoleController {
 
       roleToCreate = await RoleService.create(roleToCreate);
       if (!roleToCreate) {
-        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create this role");
+        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+          COMMONS_ERRORS_CODES.UNPROCESSABLE_OPERATION);
       }
       return response.status(StatusCodes.CREATED).send(roleToCreate.id);
     })(request, response, next);

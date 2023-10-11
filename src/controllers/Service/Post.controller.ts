@@ -6,7 +6,13 @@ import { StatusCodes } from "http-status-codes";
 import { CompanyService } from "../../services/Company.service";
 import { Post } from "../../entities/Post";
 import { regulariseSpacesFrom } from "../../utils/commons";
-import { PostDTO, ServiceDTO } from "../../entities/types";
+import {
+  COMMONS_ERRORS_CODES,
+  POST_ERRORS_CODES,
+  PostDTO,
+  SERVICE_ERRORS_CODES,
+  ServiceDTO
+} from "../../entities/types";
 
 export class PostController {
   static async create(
@@ -24,13 +30,15 @@ export class PostController {
         .findByName(regulariseSpacesFrom(name));
 
       if (existingPost) {
-        throw new ApiError(StatusCodes.CONFLICT, "Post already exist");
+        throw new ApiError(StatusCodes.CONFLICT,
+          COMMONS_ERRORS_CODES.CONFLICTS);
       }
 
       const serviceOfPost = await CompanyService.findServiceById(id);
 
       if (!serviceOfPost) {
-        throw new ApiError(StatusCodes.CONFLICT, "Service does not exist");
+        throw new ApiError(StatusCodes.NOT_FOUND,
+          SERVICE_ERRORS_CODES.NOT_FOUND);
       }
 
       let newPost = new Post();
@@ -42,9 +50,7 @@ export class PostController {
 
       newPost = await PostService.create(newPost);
 
-      response.status(StatusCodes.CREATED).json({
-        id: newPost.id
-      });
+      response.status(StatusCodes.CREATED).json(newPost.id);
 
     })(request, response, next);
   }
@@ -55,15 +61,11 @@ export class PostController {
     next: NextFunction
   ): Promise<string> {
     return await asyncWrapper(async () => {
-      const { id } = request.params;
-      if (!id) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Service id is missing");
-      }
-
-      const service = await CompanyService.findServiceById(id);
+      const service = await CompanyService.findServiceById(request.params.id);
 
       if (!service) {
-        throw new ApiError(StatusCodes.NOT_FOUND, "Service not found");
+        throw new ApiError(StatusCodes.NOT_FOUND,
+          SERVICE_ERRORS_CODES.NOT_FOUND);
       }
 
       const { isAdmin, isHumanResource  } = response.locals.roles;
@@ -84,26 +86,25 @@ export class PostController {
 
       const { id }  = request.params;
 
-      if (!id) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "No id found");
-      }
-
       const serviceOfPost = await CompanyService.findServiceByPostId(id);
       if (!serviceOfPost) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "There is no service for this post");
+        throw new ApiError(StatusCodes.NOT_FOUND,
+          SERVICE_ERRORS_CODES.NOT_FOUND);
       }
 
       if (!serviceOfPost.isActive) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "The service of this post is not active");
+        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+          SERVICE_ERRORS_CODES.NOT_ACTIVE);
       }
 
       const post = await PostService.findById(id);
       if (!post) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Post not found");
+        throw new ApiError(StatusCodes.NOT_FOUND, POST_ERRORS_CODES.NOT_FOUND);
       }
 
       if (post.isActive) {
-        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, "Post is already active");
+        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+          COMMONS_ERRORS_CODES.ALREADY_IN_THAT_STATE);
       }
 
       post.isActive = true;

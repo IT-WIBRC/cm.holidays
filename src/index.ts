@@ -36,7 +36,7 @@ const initApp = async (): Promise<unknown> => {
     });
 
     app
-      .use("/user", personRouter)
+      .use("/employee", personRouter)
       .use("/service", serviceRouter)
       .use("/post", postRouter)
       .use("/role", roleRouter)

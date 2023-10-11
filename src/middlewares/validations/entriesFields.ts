@@ -1,18 +1,24 @@
 import { checkSchema } from "express-validator";
 import dayjs from "dayjs";
+import {
+  COMMONS_ERRORS_CODES,
+  EMPLOYEE_ERRORS_CODES, HOLIDAY_REQUEST_ERRORS_CODES, POST_ERRORS_CODES,
+  ROLE_ERRORS_CODES,
+  SERVICE_ERRORS_CODES
+} from "../../entities/types";
 
 const emailSchema = {
   email: {
     exists: {
-      errorMessage: "Email is required"
+      errorMessage: EMPLOYEE_ERRORS_CODES.EMAIL_REQUIRED
     },
     isEmail: {
       bail: true,
-      errorMessage: "Email is in wrong format",
+      errorMessage: EMPLOYEE_ERRORS_CODES.EMAIL_FORMAT,
       options: {
         allow_utf8_local_part: true,
         require_tld: true,
-        ignore_max_length: true,
+        ignore_max_length: true
       }
     },
     normalizeEmail: {
@@ -35,11 +41,11 @@ const emailValidation = checkSchema(emailSchema);
 const passwordValidation = checkSchema({
   password: {
     exists: {
-      errorMessage: "Password is required"
+      errorMessage: EMPLOYEE_ERRORS_CODES.PASSWORD_REQUIRED
     },
     trim: true,
     isLength: {
-      errorMessage: "Password must have at least 6 character and less than 11",
+      errorMessage: EMPLOYEE_ERRORS_CODES.PASSWORD_NUMBER_OF_CHARACTERS,
       options: {
         min: 6,
         max: 10
@@ -47,7 +53,7 @@ const passwordValidation = checkSchema({
     },
     matches: {
       errorMessage:
-        "Password must have at least one uppercase, lowercase, digit and special character",
+        EMPLOYEE_ERRORS_CODES.PASSWORD_FORMAT,
       options: new RegExp(
         "(^[\\w.-@]{8,10})",
         "g"
@@ -59,11 +65,11 @@ const passwordValidation = checkSchema({
 const firstnameValidation = checkSchema({
   firstname: {
     exists: {
-      errorMessage: "FirstName is required"
+      errorMessage: EMPLOYEE_ERRORS_CODES.FIRSTNAME_REQUIRED
     },
     trim: true,
     isLength: {
-      errorMessage: "FirstName must have length less than 2",
+      errorMessage: EMPLOYEE_ERRORS_CODES.FIRSTNAME_NUMBER_OF_CHARACTERS,
       options: { min: 2 }
     }
   }
@@ -72,11 +78,11 @@ const firstnameValidation = checkSchema({
 const lastnameValidation = checkSchema({
   lastName: {
     exists: {
-      errorMessage: "LastName is required"
+      errorMessage: EMPLOYEE_ERRORS_CODES.LASTNAME_REQUIRED
     },
     trim: true,
     isLength: {
-      errorMessage: "LastName must have length less than 2",
+      errorMessage: EMPLOYEE_ERRORS_CODES.LASTNAME_NUMBER_OF_CHARACTERS,
       options: { min: 2 }
     }
   }
@@ -86,7 +92,7 @@ const assertRequiredLoginFieldsAreNotEmpty = checkSchema({
   ...emailSchema,
   password: {
     exists: {
-      errorMessage: "Password is required"
+      errorMessage: EMPLOYEE_ERRORS_CODES.PASSWORD_REQUIRED
     },
     trim: true
   }
@@ -98,14 +104,14 @@ const nameSchema = {
       options: {
         ignore_whitespace: true
       },
-      errorMessage: "Name field is empty"
+      errorMessage: COMMONS_ERRORS_CODES.NAME_REQUIRED
     },
     exists: {
-      errorMessage: "Name is required"
+      errorMessage: COMMONS_ERRORS_CODES.NAME_REQUIRED
     },
     trim: true,
     isLength: {
-      errorMessage: "Name must have length more than 2",
+      errorMessage: COMMONS_ERRORS_CODES.NAME_NUMBER_OF_CHARACTERS,
       options: { min: 2 }
     }
   }
@@ -116,17 +122,17 @@ const nameValidation = checkSchema(nameSchema);
 const descriptionValidation = checkSchema({
   description: {
     exists: {
-      errorMessage: "Description is required"
+      errorMessage: COMMONS_ERRORS_CODES.DESCRIPTION_REQUIRED
     },
     notEmpty: {
       options: {
         ignore_whitespace: false
       },
-      errorMessage: "Description field is empty"
+      errorMessage: COMMONS_ERRORS_CODES.NAME_REQUIRED
     },
     trim: true,
     isLength: {
-      errorMessage: "Description must have length more than 10",
+      errorMessage: COMMONS_ERRORS_CODES.DESCRIPTION_NUMBER_OF_CHARACTERS,
       options: { min: 10 }
     }
   }
@@ -139,18 +145,15 @@ const assertPostCreation = checkSchema({
       options: {
         ignore_whitespace: false
       },
-      errorMessage: "Service field is empty"
+      errorMessage: SERVICE_ERRORS_CODES.REQUIRED
     },
     exists: {
-      errorMessage: "Malformed request (service type is missing)"
+      errorMessage: SERVICE_ERRORS_CODES.MALFORMED
     }
   },
   "service.id": {
     exists: {
       errorMessage: "The id field is empty"
-    },
-    isUUID: {
-      errorMessage: "Wrong id is not an uuid"
     }
   }
 });
@@ -158,7 +161,7 @@ const assertPostCreation = checkSchema({
 const rolesValidation = checkSchema({
   roles: {
     notEmpty: {
-      errorMessage: "Roles are required",
+      errorMessage: ROLE_ERRORS_CODES.REQUIRED,
       options: {
         ignore_whitespace: true
       }
@@ -167,7 +170,7 @@ const rolesValidation = checkSchema({
       options: {
         min: 1
       },
-      errorMessage: "Roles must be and array"
+      errorMessage: ROLE_ERRORS_CODES.AN_ARRAY
     }
   }
 });
@@ -175,7 +178,7 @@ const rolesValidation = checkSchema({
 const postsValidation = checkSchema({
   posts: {
     notEmpty: {
-      errorMessage: "Posts are required",
+      errorMessage: POST_ERRORS_CODES.REQUIRED,
       options: {
         ignore_whitespace: true
       }
@@ -184,7 +187,7 @@ const postsValidation = checkSchema({
       options: {
         min: 1
       },
-      errorMessage: "Post must be and array"
+      errorMessage: POST_ERRORS_CODES.AN_ARRAY
     }
   }
 });
@@ -195,78 +198,78 @@ const assertHolidayRequestCreation = checkSchema({
       options: {
         ignore_whitespace: false
       },
-      errorMessage: "Holiday Type field is empty"
+      errorMessage: HOLIDAY_REQUEST_ERRORS_CODES.HOLIDAY_TYPE_REQUIRED
     },
     exists: {
-      errorMessage: "Malformed request (Holiday type is missing)"
+      errorMessage: HOLIDAY_REQUEST_ERRORS_CODES.HOLIDAY_TYPE_REQUIRED
     }
   },
   "type.id": {
     exists: {
       errorMessage: "The id field is empty"
-    },
-    isUUID: {
-      errorMessage: "Wrong id is not an uuid"
     }
   },
   startingDate: {
     notEmpty: {
-      errorMessage: "The starting date field is empty"
+      errorMessage: HOLIDAY_REQUEST_ERRORS_CODES.STARTING_DATE_REQUIRED
     },
     exists: {
-      errorMessage: "The starting date field is required"
+      errorMessage: HOLIDAY_REQUEST_ERRORS_CODES.STARTING_DATE_REQUIRED
     },
     trim: true,
     isDate: {
-      errorMessage: "The starting date must be a date",
+      errorMessage: HOLIDAY_REQUEST_ERRORS_CODES.STARTING_DATE_MUST_BE_DATE,
       options: {
         strictMode: true,
         format: "YYYY-MM-DD"
       }
     },
     custom: {
-      errorMessage: "The starting date must be higher than the actual date",
+      errorMessage:
+      HOLIDAY_REQUEST_ERRORS_CODES.STARTING_DATE_MUST_HIGHER_THAN_ACTUAL,
       options: (value) => dayjs().isBefore(value)
     }
   },
   endingDate: {
     notEmpty: {
-      errorMessage: "The ending date field is empty"
+      errorMessage: HOLIDAY_REQUEST_ERRORS_CODES.ENDING_DATE_REQUIRED
     },
     exists: {
-      errorMessage: "The ending date field is required"
+      errorMessage: HOLIDAY_REQUEST_ERRORS_CODES.ENDING_DATE_REQUIRED
     },
     trim: true,
     isDate: {
-      errorMessage: "The ending date field must be a date",
+      errorMessage: HOLIDAY_REQUEST_ERRORS_CODES.ENDING_DATE_MUST_BE_DATE,
       options: {
         strictMode: true,
         format: "YYYY-MM-DD"
       }
     },
     custom: {
-      errorMessage: "The ending date must be higher than the starting date",
+      errorMessage:
+      HOLIDAY_REQUEST_ERRORS_CODES.ENDING_DATE_MUST_HIGHER_THAN_STARTING_DATE,
       options: (value, { req: { body } }) =>
         dayjs(value).isAfter(body.startingDate)
     }
   },
   returningDate: {
     notEmpty: {
-      errorMessage: "The returning date field is empty"
+      errorMessage: HOLIDAY_REQUEST_ERRORS_CODES.RETURNING_DATE_REQUIRED
     },
     exists: {
-      errorMessage: "The returning date is required"
+      errorMessage: HOLIDAY_REQUEST_ERRORS_CODES.RETURNING_DATE_REQUIRED
     },
     trim: true,
     isDate: {
-      errorMessage: "The returning date must be a date",
+      errorMessage: HOLIDAY_REQUEST_ERRORS_CODES.RETURNING_DATE_MUST_BE_DATE,
       options: {
         strictMode: true,
         format: "YYYY-MM-DD"
       }
     },
     custom: {
-      errorMessage: "The returning date date must be higher than the ending date",
+      errorMessage:
+      HOLIDAY_REQUEST_ERRORS_CODES.RETURNING_DATE_MUST_HIGHER_THAN_ENDING_DATE,
       options: (value, { req: { body } }) =>
         dayjs(value).isAfter(body.endingDate)
 

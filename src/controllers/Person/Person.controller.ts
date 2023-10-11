@@ -2,7 +2,7 @@ import {
   EmployeeDTOForCreation,
   EmployeeTokenDTO,
   EmployeeDTOForLogin,
-  EmployeeDTO
+  EmployeeDTO, COMMONS_ERRORS_CODES, ROLE_ERRORS_CODES
 } from "../../entities/types";
 import { NextFunction, Request, Response } from "express";
 import { PersonService } from "../../services/Person.service";
@@ -27,7 +27,8 @@ export class PersonController {
         .findByEmail(regulariseSpacesFrom(request.body.email, ""));
 
       if (!person) {
-        throw new ApiError(StatusCodes.NOT_FOUND, "Person not found");
+        throw new ApiError(
+          StatusCodes.NOT_FOUND, COMMONS_ERRORS_CODES.NOT_FOUND);
       }
 
       const isSame: boolean = await Auth.comparePassword(
@@ -37,8 +38,8 @@ export class PersonController {
 
       if (!isSame) {
         throw  new ApiError(
-          StatusCodes.BAD_REQUEST,
-          "Wrong information provided"
+          StatusCodes.NOT_FOUND,
+          COMMONS_ERRORS_CODES.NOT_FOUND
         );
       }
 
@@ -58,11 +59,8 @@ export class PersonController {
       const person = await PersonService.findByEmail(email);
 
       if (person) {
-        throw new ApiError(StatusCodes.CONFLICT, "Person already exist");
-      }
-
-      if (!roles.length) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Request has been malformed");
+        throw new ApiError(StatusCodes.CONFLICT,
+          COMMONS_ERRORS_CODES.CONFLICTS);
       }
 
       const existingRole: Role[] = [];
@@ -72,7 +70,9 @@ export class PersonController {
       }
 
       if (existingRole.length !== roles.length) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Request has been malformed");
+        throw new ApiError(
+          StatusCodes.NOT_FOUND,
+          ROLE_ERRORS_CODES.NOT_FOUND);
       }
 
       const setting = await SettingService.create({
@@ -89,7 +89,8 @@ export class PersonController {
 
       newUser = await PersonService.create(newUser);
       if (!newUser) {
-        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "User has failed to be create");
+        throw new ApiError(StatusCodes.CONFLICT,
+          COMMONS_ERRORS_CODES.FAILED_OPERATION);
       }
 
       return response.status(StatusCodes.CREATED).json({
@@ -106,14 +107,12 @@ export class PersonController {
   ) : Promise<Response<EmployeeDTO>> {
     return await asyncWrapper(
       async (): Promise<Response<EmployeeDTOForCreation>> => {
-        const { id } = request.params;
-        if (!id) {
-          throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-EMPLOYEE-4009");
-        }
-
-        const person = await PersonService.findUserById(id);
+        const person = await PersonService.findUserById(request.params.id);
         if (!person) {
-          throw new ApiError(StatusCodes.NOT_FOUND, "HOLIDAY-EMPLOYEE-4004");
+          throw new ApiError(
+            StatusCodes.NOT_FOUND,
+            COMMONS_ERRORS_CODES.NOT_FOUND
+          );
         }
 
         return response.status(StatusCodes.OK).json(person);
