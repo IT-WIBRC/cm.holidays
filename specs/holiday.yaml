@@ -4,9 +4,9 @@ info:
   description: REST API endpoints for managing Holiday
   version: 0.0.0-SNAPSHOT
 servers:
-  - url: 'https'
+  - url: 'api/v1'
 paths:
-  /service/add:
+  /service:
     post:
       tags:
         - Service
@@ -32,6 +32,21 @@ paths:
           description: HOLIDAY-4009
         400:
           description: HOLIDAY-3009 | HOLIDAY-3010 | HOLIDAY-3011 | HOLIDAY-3012
+    get:
+      tags:
+        - Service
+      summary: get all services
+      description: get all services
+      operationId: getAllServices
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceDTO'
   /service/{id}/activate:
     put:
       tags:
@@ -76,22 +91,6 @@ paths:
           description: HOLIDAY-3029
         404:
           description: HOLIDAY-3029
-  /service/all:
-    get:
-      tags:
-        - Service
-      summary: get all services
-      description: get all services
-      operationId: getAllServices
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ServiceDTO'
   /service/{id}:
     get:
       tags:
@@ -145,7 +144,7 @@ paths:
         404:
           description: HOLIDAY-SERVICE-4004
 
-  /post/add:
+  /post:
     post:
       tags:
         - Post
@@ -171,6 +170,21 @@ paths:
           description: HOLIDAY-4009 | HOLIDAY-5001
         400:
           description: HOLIDAY-3009 | HOLIDAY-3010 | HOLIDAY-3011 | HOLIDAY-3012 | HOLIDAY-3030
+    get:
+      tags:
+        - Post
+      summary: get all posts
+      description: get all posts
+      operationId: getAllPosts
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostDTO'
   /post/{id}/activate:
     put:
       tags:
@@ -215,22 +229,7 @@ paths:
           description: HOLIDAY-3029
         404:
           description: HOLIDAY-3029 | HOLIDAY-3031
-  /post/all:
-    get:
-      tags:
-        - Post
-      summary: get all posts
-      description: get all posts
-      operationId: getAllPosts
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PostDTO'
+
   /post/{id}:
     get:
       tags:
@@ -310,7 +309,7 @@ paths:
         404:
           description: HOLIDAY-3030
 
-  /employee/add:
+  /employee:
     post:
       tags:
         - Employee
@@ -339,7 +338,6 @@ paths:
           description: HOLIDAY-3036 | HOLIDAY-4000
         400:
           description: HOLIDAY-3000 | HOLIDAY-3001 | HOLIDAY-3002 | HOLIDAY-3003 | HOLIDAY-3004 | HOLIDAY-3005 | HOLIDAY-3006 | HOLIDAY-3007 | HOLIDAY-3008
-  /employee/all:
     get:
       tags:
         - Employee
@@ -355,7 +353,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/EmployeeDTO'
-  /employee:
+  /employee/login:
     post:
       tags:
         - Employee
@@ -431,7 +429,7 @@ paths:
         404:
           description: HOLIDAY-4004
 
-  /role/add:
+  /role:
     post:
       tags:
         - Role
@@ -457,6 +455,21 @@ paths:
           description: HOLIDAY-4009 | HOLIDAY-5001
         400:
           description: HOLIDAY-3009 | HOLIDAY-3010 | HOLIDAY-3011 | HOLIDAY-3012 | HOLIDAY-3030
+    get:
+      tags:
+        - Role
+      summary: get all roles
+      description: get all roles
+      operationId: getAllRoles
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoleDTO'
   /role/{id}:
     get:
       tags:
@@ -509,22 +522,6 @@ paths:
           description: successful operation
         404:
           description: HOLIDAY-4004
-  /role/all:
-    get:
-      tags:
-        - Role
-      summary: get all roles
-      description: get all roles
-      operationId: getAllRoles
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RoleDTO'
   /role/{id}/assign-permissions:
     put:
       tags:
@@ -599,7 +596,7 @@ paths:
         404:
           description: HOLIDAY-4004
 
-  /holidayRequest/add:
+  /holidayRequest:
     post:
       tags:
         - HolidayRequest
@@ -625,6 +622,25 @@ paths:
           description: HOLIDAY-3038 | HOLIDAY-4004 | HOLIDAY-5001
         404:
           description: HOLIDAY-3037
+    get:
+      tags:
+        - HolidayRequest
+      summary: get all holiday requests
+      description: get all holiday requests
+      operationId: getAllHolidayRequest
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HolidayRequestDTO'
+        400:
+          description: HOLIDAY-REQUEST-4000
+        401:
+          description: HOLIDAY-REQUEST-4001
   /holidayRequest/{id}:
     get:
       tags:
@@ -683,26 +699,6 @@ paths:
           description: HOLIDAY-REQUEST-4001
         409:
           description: HOLIDAY-REQUEST-4009 | HOLIDAY-REQUEST-3000
-  /holidayRequest/all:
-    get:
-      tags:
-        - HolidayRequest
-      summary: get all holiday requests
-      description: get all holiday requests
-      operationId: getAllHolidayRequest
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/HolidayRequestDTO'
-        400:
-          description: HOLIDAY-REQUEST-4000
-        401:
-          description: HOLIDAY-REQUEST-4001
   /holidayRequest/{id}/status/{status}:
     put:
       tags:
@@ -734,7 +730,7 @@ paths:
         401:
           description: HOLIDAY-4001
 
-  /holidayType/add:
+  /holidayType:
     post:
       tags:
         - HolidayType
@@ -760,7 +756,6 @@ paths:
           description: HOLIDAY-3040 | HOLIDAY-5001
         400:
           description: HOLIDAY-3009 | HOLIDAY-3010
-  /holidayType/all:
     get:
       tags:
         - HolidayType

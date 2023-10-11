@@ -1,8 +1,11 @@
 import {
+  COMMONS_ERRORS_CODES,
+  EmployeeDTO,
   EmployeeDTOForCreation,
-  EmployeeTokenDTO,
   EmployeeDTOForLogin,
-  EmployeeDTO, COMMONS_ERRORS_CODES, ROLE_ERRORS_CODES
+  EmployeeTokenDTO,
+  ROLE_ERRORS_CODES,
+  USER_ROLE
 } from "../../entities/types";
 import { NextFunction, Request, Response } from "express";
 import { PersonService } from "../../services/Person.service";
@@ -117,5 +120,32 @@ export class PersonController {
 
         return response.status(StatusCodes.OK).json(person);
       })(request, response, next);
+  }
+
+  static async getAll(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response<EmployeeDTO[]>> {
+    return await asyncWrapper(async (): Promise<Response<EmployeeDTO>> => {
+
+      const { isAdmin } = response.locals.roles;
+      const persons = await PersonService.findAll();
+
+      if (isAdmin) {
+        return response.status(StatusCodes.OK).json(persons);
+      }
+      return response.status(StatusCodes.OK).json(
+        persons
+          .filter(person =>
+            !person.roles.map((role) => role.type).includes(USER_ROLE.ADMIN))
+          .map((person) => {
+            return {
+              ...person,
+              roles: undefined
+            };
+          })
+      );
+    })(request, response, next);
   }
 }

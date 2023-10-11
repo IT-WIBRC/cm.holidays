@@ -31,11 +31,8 @@ const initApp = async (): Promise<unknown> => {
       .use(express.urlencoded({ extended: true }))
       .use(express.json());
 
-    app.get("/", (req, res) => {
-      return res.json("Established connection!");
-    });
-
     app
+      .all("api/v1")
       .use("/employee", personRouter)
       .use("/service", serviceRouter)
       .use("/post", postRouter)

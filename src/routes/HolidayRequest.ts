@@ -10,29 +10,28 @@ import { assertHolidayRequestCreation } from "../middlewares/validations/entries
 initEnv();
 const holidayRequestRouter = Router();
 
-holidayRequestRouter.use(
-  expressjwt({
-    secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
-    algorithms: [TOKEN_ENCRYPT_ALGO]
-  }),
-  userHasRoles(["ADMIN", "EMPLOYEE", "HUMAN_RESOURCE"], false)
-)
-  .get(
-    "/all",
-    HolidayRequestController.getAll
-  )
-  .post(
-    "/add",
-    assertHolidayRequestCreation,
-    handleFieldsValidation,
-    HolidayRequestController.create
-  )
+holidayRequestRouter
   .put(
     "/:id/status/:status",
     HolidayRequestController.updateStatus
-  ).put(
+  )
+  .put(
     "/:id",
     HolidayRequestController.update
+  )
+  .use(
+    expressjwt({
+      secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
+      algorithms: [TOKEN_ENCRYPT_ALGO]
+    }),
+    userHasRoles(["ADMIN", "EMPLOYEE", "HUMAN_RESOURCE"], false)
+  )
+  .route("")
+  .get(HolidayRequestController.getAll)
+  .post(
+    assertHolidayRequestCreation,
+    handleFieldsValidation,
+    HolidayRequestController.create
   );
 
 export { holidayRequestRouter };

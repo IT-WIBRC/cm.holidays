@@ -10,37 +10,29 @@ import { userHasRoles } from "../middlewares/validations/user/Roles";
 initEnv();
 const serviceRouter = Router();
 
-serviceRouter.post(
-  "/add",
-  expressjwt({
-    secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
-    algorithms: [TOKEN_ENCRYPT_ALGO]
-  }),
-  userHasRoles(["ADMIN"]),
-  nameValidation,
-  descriptionValidation,
-  handleFieldsValidation,
-  ServiceController.createService
-);
-
-serviceRouter.get(
-  "/all",
-  expressjwt({
-    secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
-    algorithms: [TOKEN_ENCRYPT_ALGO]
-  }),
-  userHasRoles(["ADMIN", "HUMAN_RESOURCE"], false),
-  ServiceController.getAllServices
-);
-
-serviceRouter.put(
-  "/:id/activate",
-  expressjwt({
-    secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
-    algorithms: [TOKEN_ENCRYPT_ALGO]
-  }),
-  userHasRoles(["ADMIN"]),
-  ServiceController.activeService
-);
+serviceRouter
+  .use(
+    expressjwt({
+      secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
+      algorithms: [TOKEN_ENCRYPT_ALGO]
+    })
+  )
+  .put(
+    "/:id/activate",
+    userHasRoles(["ADMIN"]),
+    ServiceController.activeService
+  )
+  .route("")
+  .post(
+    userHasRoles(["ADMIN"]),
+    nameValidation,
+    descriptionValidation,
+    handleFieldsValidation,
+    ServiceController.createService
+  )
+  .get(
+    userHasRoles(["ADMIN", "HUMAN_RESOURCE"], false),
+    ServiceController.getAllServices
+  );
 
 export { serviceRouter };

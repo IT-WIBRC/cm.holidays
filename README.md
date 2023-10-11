@@ -85,3 +85,10 @@ Allow person in the company to ask for a holiday that the company allow. Further
  - Edit (EmployeeController, Holiday, Service, Post) information
  - user `express-jwt-permission` to manage permission as well as role (already installed)
  - Cannot activate a post without activating the service before
+ - use auto mapper (Automappers)[https://automapperts.netlify.app/]
+ - Use `class-validator` and `class-transformer` for validation
+ - Use `Injection Dependency` ad `Inversion of Control`
+ - Use `DDD(Doman Driven Design)` (DDD)[https://khalilstemmler.com/articles/typescript-value-object/]
+ - Use `ValueObject` (valueObject)[https://khalilstemmler.com/articles/typescript-value-object/]
+ - Use `DTO` in deep (DTO)[https://khalilstemmler.com/articles/enterprise-typescript-nodejs/use-dtos-to-enforce-a-layer-of-indirection/]
+ - Other Link there (khalilstemmler.com)[https://khalilstemmler.com/articles/categories/enterprise-node-type-script]

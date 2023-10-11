@@ -21,22 +21,30 @@ personRouter.post(
   PersonController.login
 );
 
-personRouter.post(
-  "/add",
-  expressjwt({
-    secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
-    algorithms: [TOKEN_ENCRYPT_ALGO]
-  }),
-  firstnameValidation,
-  lastnameValidation,
-  emailValidation,
-  passwordValidation,
-  rolesValidation,
-  postsValidation,
-  handleFieldsValidation,
-  userHasRoles(["ADMIN", "HUMAN_RESOURCE"], false),
-  EmployeeController.create
-);
+personRouter.route("")
+  .post(
+    expressjwt({
+      secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
+      algorithms: [TOKEN_ENCRYPT_ALGO]
+    }),
+    firstnameValidation,
+    lastnameValidation,
+    emailValidation,
+    passwordValidation,
+    rolesValidation,
+    postsValidation,
+    handleFieldsValidation,
+    userHasRoles(["ADMIN", "HUMAN_RESOURCE"], false),
+    EmployeeController.create
+  )
+  .get(
+    expressjwt({
+      secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
+      algorithms: [TOKEN_ENCRYPT_ALGO]
+    }),
+    userHasRoles(["ADMIN", "HUMAN_RESOURCE"], false),
+    PersonController.getAll
+  );
 
 personRouter.post(
   "/config/administrator",

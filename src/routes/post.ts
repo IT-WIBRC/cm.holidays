@@ -10,46 +10,33 @@ import { PostController } from "../controllers/Service/Post.controller";
 initEnv();
 const postRouter = Router();
 
-postRouter.post(
-  "/add",
-  expressjwt({
-    secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
-    algorithms: [TOKEN_ENCRYPT_ALGO]
-  }),
-  userHasRoles(["ADMIN"]),
-  assertPostCreation,
-  handleFieldsValidation,
-  PostController.create
-);
-
-postRouter.get(
-  "/service/:id",
-  expressjwt({
-    secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
-    algorithms: [TOKEN_ENCRYPT_ALGO]
-  }),
-  userHasRoles(["ADMIN", "HUMAN_RESOURCE"], false),
-  PostController.getPostByServiceId
-);
-
-postRouter.put(
-  "/:id/activate",
-  expressjwt({
-    secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
-    algorithms: [TOKEN_ENCRYPT_ALGO]
-  }),
-  userHasRoles(["ADMIN"]),
-  PostController.activePost
-);
-
-postRouter.get(
-  "/all",
-  expressjwt({
-    secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
-    algorithms: [TOKEN_ENCRYPT_ALGO]
-  }),
-  userHasRoles(["ADMIN"]),
-  PostController.getAll
-);
+postRouter
+  .use(
+    expressjwt({
+      secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
+      algorithms: [TOKEN_ENCRYPT_ALGO]
+    })
+  )
+  .get(
+    "/service/:id",
+    userHasRoles(["ADMIN", "HUMAN_RESOURCE"], false),
+    PostController.getPostByServiceId
+  )
+  .put(
+    "/:id/activate",
+    userHasRoles(["ADMIN"]),
+    PostController.activePost
+  )
+  .route("")
+  .get(
+    userHasRoles(["ADMIN"]),
+    PostController.getAll
+  )
+  .post(
+    userHasRoles(["ADMIN"]),
+    assertPostCreation,
+    handleFieldsValidation,
+    PostController.create
+  );
 
 export { postRouter };
