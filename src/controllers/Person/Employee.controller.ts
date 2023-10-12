@@ -11,7 +11,13 @@ import { Employee } from "../../entities/Employee";
 import { regulariseSpacesFrom } from "../../utils/commons";
 import { PostService } from "../../services/Post.service";
 import { Post } from "../../entities/Post";
-import { EmployeeDTOForCreation, EmployeeTokenDTO, USER_ROLE } from "../../entities/types";
+import {
+  COMMONS_ERRORS_CODES,
+  EMPLOYEE_ERRORS_CODES,
+  EmployeeDTOForCreation,
+  EmployeeTokenDTO, POST_ERRORS_CODES, ROLE_ERRORS_CODES,
+  USER_ROLE
+} from "../../entities/types";
 
 export class EmployeeController extends PersonController {
   constructor() {
@@ -38,14 +44,16 @@ export class EmployeeController extends PersonController {
       const employeeWithSameEmail = await PersonService.findByEmail(email);
 
       if (employeeWithSameEmail) {
-        throw new ApiError(StatusCodes.CONFLICT, "Employee with this email already exist");
+        throw new ApiError(StatusCodes.CONFLICT,
+          EMPLOYEE_ERRORS_CODES.EXISTED_EMAIL);
       }
 
       const employeeWithSameLastName = await PersonService
         .findByLastName(regulariseSpacesFrom(lastName));
 
       if (employeeWithSameLastName) {
-        throw new ApiError(StatusCodes.CONFLICT, "Employee with this lastName already exist");
+        throw new ApiError(StatusCodes.CONFLICT,
+          EMPLOYEE_ERRORS_CODES.EXISTED_LASTNAME);
       }
 
       const userToCreateRoles: Role[] = [];
@@ -55,7 +63,9 @@ export class EmployeeController extends PersonController {
       }
 
       if (userToCreateRoles.length !== roles.length) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Request has been malformed");
+        throw new ApiError(
+          StatusCodes.NOT_FOUND,
+          ROLE_ERRORS_CODES.NOT_FOUND);
       }
 
       const userWantedToBeCreateHasAdminRole = userToCreateRoles
@@ -75,7 +85,8 @@ export class EmployeeController extends PersonController {
         (!!creatorIsAdmin || !!creatorIsHumanResource);
 
       if (!canCreateUser) {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, "User cannot create this one");
+        throw new ApiError(StatusCodes.UNAUTHORIZED,
+          EMPLOYEE_ERRORS_CODES.UNAUTHORIZED);
       }
 
       const userPosts: Post[] = [];
@@ -85,11 +96,13 @@ export class EmployeeController extends PersonController {
       }
 
       if (!userPosts.every((userPost) => userPost.isActive)) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Bad posts chose");
+        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+          POST_ERRORS_CODES.NOT_ACTIVE);
       }
 
       if (userPosts.length !== posts.length) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Request has been malformed");
+        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+          COMMONS_ERRORS_CODES.BAD_REQUEST);
       }
 
       const userSetting = await SettingService.create({
@@ -97,7 +110,8 @@ export class EmployeeController extends PersonController {
       });
 
       if (!userSetting) {
-        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Settings failed to be created for thi user");
+        throw new ApiError(StatusCodes.CONFLICT,
+          COMMONS_ERRORS_CODES.CONFLICTS);
       }
 
       let newEmployee: Employee | null = new Employee();
@@ -111,7 +125,8 @@ export class EmployeeController extends PersonController {
 
       newEmployee = await PersonService.create(newEmployee);
       if (!newEmployee) {
-        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Employee has failed to be create");
+        throw new ApiError(StatusCodes.CONFLICT,
+          COMMONS_ERRORS_CODES.CONFLICTS);
       }
 
       return response.status(StatusCodes.CREATED).json(newEmployee.id);

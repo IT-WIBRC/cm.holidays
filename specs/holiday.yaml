@@ -29,11 +29,9 @@ paths:
                 type: string
                 format: uuid
         409:
-          description: HOLIDAY-SERVICE-4009
-        401:
-          description: HOLIDAY-SERVICE-4001
-        500:
-          description: HOLIDAY-SERVICE-5000
+          description: HOLIDAY-4009
+        400:
+          description: HOLIDAY-3009 | HOLIDAY-3010 | HOLIDAY-3011 | HOLIDAY-3012
   /service/{id}/activate:
     put:
       tags:
@@ -52,10 +50,10 @@ paths:
       responses:
         204:
           description: successful operation
-        409:
-          description: HOLIDAY-SERVICE-4009
+        422:
+          description: HOLIDAY-3029
         404:
-          description: HOLIDAY-SERVICE-4004
+          description: HOLIDAY-4004
   /service/{id}/deactivate:
     put:
       tags:
@@ -74,10 +72,10 @@ paths:
       responses:
         204:
           description: successful operation
-        409:
-          description: HOLIDAY-SERVICE-4009
+        422:
+          description: HOLIDAY-3029
         404:
-          description: HOLIDAY-SERVICE-4004
+          description: HOLIDAY-3029
   /service/all:
     get:
       tags:
@@ -94,10 +92,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ServiceDTO'
-        400:
-          description: HOLIDAY-SERVICE-4000
-        401:
-          description: HOLIDAY-SERVICE-4001
   /service/{id}:
     get:
       tags:
@@ -122,10 +116,8 @@ paths:
                 type: object
                 items:
                   $ref: '#/components/schemas/ServiceDTO'
-        400:
-          description: HOLIDAY-SERVICE-4000
-        401:
-          description: HOLIDAY-SERVICE-4001
+        404:
+          description: HOLIDAY-4004
     put:
       tags:
         - Service
@@ -176,11 +168,9 @@ paths:
                 type: string
                 format: uuid
         409:
-          description: HOLIDAY-POST-4009
-        401:
-          description: HOLIDAY-POST-4001
-        500:
-          description: HOLIDAY-POST-5000
+          description: HOLIDAY-4009 | HOLIDAY-5001
+        400:
+          description: HOLIDAY-3009 | HOLIDAY-3010 | HOLIDAY-3011 | HOLIDAY-3012 | HOLIDAY-3030
   /post/{id}/activate:
     put:
       tags:
@@ -197,12 +187,12 @@ paths:
             type: string
             format: uuid
       responses:
-        200:
+        204:
           description: successful operation
-        409:
-          description: HOLIDAY-POST-4009
-        401:
-          description: HOLIDAY-POST-4001
+        422:
+          description: HOLIDAY-3029
+        404:
+          description: HOLIDAY-3029 | HOLIDAY-3030 | HOLIDAY-3031 | HOLIDAY-3032
   /post/{id}/deactivate:
     put:
       tags:
@@ -221,10 +211,10 @@ paths:
       responses:
         204:
           description: successful operation
-        409:
-          description: HOLIDAY-POST-4009
+        422:
+          description: HOLIDAY-3029
         404:
-          description: HOLIDAY-POST-4004
+          description: HOLIDAY-3029 | HOLIDAY-3031
   /post/all:
     get:
       tags:
@@ -241,10 +231,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PostDTO'
-        400:
-          description: HOLIDAY-POST-4000
-        401:
-          description: HOLIDAY-POST-4001
   /post/{id}:
     get:
       tags:
@@ -269,10 +255,8 @@ paths:
                 type: object
                 items:
                   $ref: '#/components/schemas/PostDTO'
-        400:
-          description: HOLIDAY-POST-4000
-        401:
-          description: HOLIDAY-POST-4001
+        404:
+          description: HOLIDAY-4004
     put:
       tags:
         - Post
@@ -298,7 +282,7 @@ paths:
         204:
           description: successful operation
         404:
-          description: HOLIDAY-POST-4004
+          description: HOLIDAY-4004
   /post/service/{id}:
     get:
       tags:
@@ -324,9 +308,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/PostDTO'
         404:
-          description: HOLIDAY-SERVICE-4004
-        401:
-          description: HOLIDAY-EMPLOYEE-4001
+          description: HOLIDAY-3030
 
   /employee/add:
     post:
@@ -350,11 +332,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/EmployeeTokenDTO'
         409:
-          description: HOLIDAY-EMPLOYEE-4009
-        401:
-          description: HOLIDAY-EMPLOYEE-4001
-        500:
-          description: HOLIDAY-EMPLOYEE-5000
+          description: HOLIDAY-4009 | HOLIDAY-5001
+        404:
+          description: HOLIDAY-3033
+        422:
+          description: HOLIDAY-3036 | HOLIDAY-4000
+        400:
+          description: HOLIDAY-3000 | HOLIDAY-3001 | HOLIDAY-3002 | HOLIDAY-3003 | HOLIDAY-3004 | HOLIDAY-3005 | HOLIDAY-3006 | HOLIDAY-3007 | HOLIDAY-3008
   /employee/all:
     get:
       tags:
@@ -371,10 +355,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/EmployeeDTO'
-        400:
-          description: HOLIDAY-EMPLOYEE-4000
-        401:
-          description: HOLIDAY-EMPLOYEE-4001
   /employee:
     post:
       tags:
@@ -395,11 +375,9 @@ paths:
           content:
             application/json:
               schema:
-                type: string
-                format: uuid
+                $ref: '#/components/schemas/EmployeeTokenDTO'
         404:
-          description: HOLIDAY-EMPLOYEE-4004
-
+          description: HOLIDAY-4004
   /employee/{id}:
     get:
       tags:
@@ -424,14 +402,8 @@ paths:
                 type: object
                 items:
                   $ref: '#/components/schemas/EmployeeDTO'
-        400:
-          description: HOLIDAY-EMPLOYEE-4000
         404:
-          description: HOLIDAY-EMPLOYEE-4004
-        401:
-          description: HOLIDAY-EMPLOYEE-4001
-        409:
-          description: HOLIDAY-EMPLOYEE-4009
+          description: HOLIDAY-4004
     put:
       tags:
         - Employee
@@ -457,7 +429,7 @@ paths:
         204:
           description: successful operation
         404:
-          description: HOLIDAY-EMPLOYEE-4004
+          description: HOLIDAY-4004
 
   /role/add:
     post:
@@ -482,11 +454,9 @@ paths:
                 type: string
                 format: uuid
         409:
-          description: HOLIDAY-ROLE-4009
-        401:
-          description: HOLIDAY-ROLE-4001
-        500:
-          description: HOLIDAY-ROLE-5000
+          description: HOLIDAY-4009 | HOLIDAY-5001
+        400:
+          description: HOLIDAY-3009 | HOLIDAY-3010 | HOLIDAY-3011 | HOLIDAY-3012 | HOLIDAY-3030
   /role/{id}:
     get:
       tags:
@@ -511,10 +481,8 @@ paths:
                 type: object
                 items:
                   $ref: '#/components/schemas/RoleDTO'
-        400:
-          description: HOLIDAY-ROLE-4000
-        401:
-          description: HOLIDAY-ROLE-4001
+        404:
+          description: HOLIDAY-4004
     put:
       tags:
         - Role
@@ -540,7 +508,7 @@ paths:
         204:
           description: successful operation
         404:
-          description: HOLIDAY-ROLE-4004
+          description: HOLIDAY-4004
   /role/all:
     get:
       tags:
@@ -557,10 +525,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/RoleDTO'
-        400:
-          description: HOLIDAY-ROLE-4000
-        401:
-          description: HOLIDAY-ROLE-4001
   /role/{id}/assign-permissions:
     put:
       tags:
@@ -587,9 +551,9 @@ paths:
         200:
           description: successful operation
         409:
-          description: HOLIDAY-POST-4009
+          description: HOLIDAY-4009
         401:
-          description: HOLIDAY-POST-4001
+          description: HOLIDAY-4001
   /role/{id}/activate:
     put:
       tags:
@@ -609,9 +573,9 @@ paths:
         200:
           description: successful operation
         409:
-          description: HOLIDAY-ROLE-4009
+          description: HOLIDAY-4009
         401:
-          description: HOLIDAY-ROLE-4001
+          description: HOLIDAY-4001
   /role/{id}/deactivate:
     put:
       tags:
@@ -631,9 +595,9 @@ paths:
         204:
           description: successful operation
         409:
-          description: HOLIDAY-ROLE-4009
+          description: HOLIDAY-4009
         404:
-          description: HOLIDAY-ROLE-4004
+          description: HOLIDAY-4004
 
   /holidayRequest/add:
     post:
@@ -658,11 +622,9 @@ paths:
                 type: string
                 format: uuid
         409:
-          description: HOLIDAY-REQUEST-4009
-        401:
-          description: HOLIDAY-REQUEST-4001
-        500:
-          description: HOLIDAY-REQUEST-5000
+          description: HOLIDAY-3038 | HOLIDAY-4004 | HOLIDAY-5001
+        404:
+          description: HOLIDAY-3037
   /holidayRequest/{id}:
     get:
       tags:
@@ -687,10 +649,8 @@ paths:
                 type: object
                 items:
                   $ref: '#/components/schemas/HolidayRequestDTO'
-        400:
-          description: HOLIDAY-REQUEST-4000
-        401:
-          description: HOLIDAY-REQUEST-4001
+        404:
+          description: HOLIDAY-4004
     put:
       tags:
         - HolidayRequest
@@ -767,12 +727,12 @@ paths:
       responses:
         204:
           description: successful operation
-        400:
-          description: HOLIDAY-REQUEST-4000
-        401:
-          description: HOLIDAY-REQUEST-4001
+        422:
+          description: HOLIDAY-4022
         404:
-          description: HOLIDAY-REQUEST-4004
+          description: HOLIDAY-4004
+        401:
+          description: HOLIDAY-4001
 
   /holidayType/add:
     post:
@@ -797,11 +757,9 @@ paths:
                 type: string
                 format: uuid
         409:
-          description: HOLIDAY-TYPE-4009
-        401:
-          description: HOLIDAY-TYPE-4001
-        500:
-          description: HOLIDAY-TYPE-5000
+          description: HOLIDAY-3040 | HOLIDAY-5001
+        400:
+          description: HOLIDAY-3009 | HOLIDAY-3010
   /holidayType/all:
     get:
       tags:
@@ -818,10 +776,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/HolidayTypeDTO'
-        400:
-          description: HOLIDAY-TYPE-4000
-        401:
-          description: HOLIDAY-TYPE-4001
 components:
   schemas:
     EmployeeDTO:

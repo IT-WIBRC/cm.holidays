@@ -13,7 +13,7 @@ class ApiError extends Error {
 
 class NotFound extends ApiError {
   constructor(path: string) {
-    super(StatusCodes.NOT_FOUND, path);
+    super(StatusCodes.BAD_REQUEST, path);
   }
 }
 
@@ -25,7 +25,8 @@ class ErrorHandler {
       res: Response,
       next: NextFunction
     ): Promise<void> => {
-      const statusCode = err.statusCode || 500;
+      let statusCode =  err.statusCode || 500;
+      if (err.name === "UnauthorizedError") statusCode = 401;
       res.status(statusCode).json({
         success: false,
         message: err.message,

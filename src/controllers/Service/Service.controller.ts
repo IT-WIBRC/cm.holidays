@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ServiceDTO } from "../../entities/types";
+import { COMMONS_ERRORS_CODES, ServiceDTO } from "../../entities/types";
 import { asyncWrapper } from "../requestHanlder";
 import { CompanyService } from "../../services/Company.service";
 import { ApiError } from "../../middlewares/errors/Api";
@@ -17,7 +17,7 @@ export class ServiceController {
       if (service) {
         throw  new ApiError(
           StatusCodes.CONFLICT,
-          "This service already exist"
+          COMMONS_ERRORS_CODES.CONFLICTS
         );
       }
 
@@ -32,7 +32,8 @@ export class ServiceController {
       });
 
       if (!newCreatedService) {
-        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Creation failed to proceed");
+        throw new ApiError(StatusCodes.CONFLICT,
+          COMMONS_ERRORS_CODES.CONFLICTS);
       }
       return response.status(StatusCodes.CREATED).json(newCreatedService.id);
     })(request, response, next);
@@ -60,17 +61,15 @@ export class ServiceController {
     next: NextFunction): Promise<Response<void>> {
     return await asyncWrapper(async () => {
 
-      if (!request.params.id) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "No id found");
-      }
-
       const service = await CompanyService.findServiceById(request.params.id);
       if (!service) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Service not found");
+        throw new ApiError(StatusCodes.NOT_FOUND,
+          COMMONS_ERRORS_CODES.NOT_FOUND);
       }
 
       if (service.isActive) {
-        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, "Service is already active");
+        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+          COMMONS_ERRORS_CODES.ALREADY_IN_THAT_STATE);
       }
 
       service.isActive = true;

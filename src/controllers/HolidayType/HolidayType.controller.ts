@@ -5,7 +5,7 @@ import { regulariseSpacesFrom } from "../../utils/commons";
 import { ApiError } from "../../middlewares/errors/Api";
 import { StatusCodes } from "http-status-codes";
 import { HolidayType } from "../../entities/HolidayType";
-import { HolidayTypeDTO } from "../../entities/types";
+import { COMMONS_ERRORS_CODES, HOLIDAY_TYPE_ERRORS_CODES, HolidayTypeDTO } from "../../entities/types";
 
 export class HolidayTypeController {
 
@@ -24,7 +24,8 @@ export class HolidayTypeController {
         .findByName(regulariseSpacesFrom(name));
 
       if (existingHolidayType) {
-        throw new ApiError(StatusCodes.CONFLICT, "This holiday type already exist");
+        throw new ApiError(StatusCodes.CONFLICT,
+          HOLIDAY_TYPE_ERRORS_CODES.ALREADY_EXIST);
       }
 
       let holidayTypeToCreate: HolidayType | null = new HolidayType();
@@ -34,7 +35,8 @@ export class HolidayTypeController {
       holidayTypeToCreate = await HolidayTypeService
         .create(holidayTypeToCreate);
       if (!holidayTypeToCreate) {
-        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create this holiday type");
+        throw new ApiError(StatusCodes.CONFLICT,
+          COMMONS_ERRORS_CODES.FAILED_OPERATION);
       }
       return response.status(StatusCodes.CREATED).json(holidayTypeToCreate.id);
     })(request, response, next);
