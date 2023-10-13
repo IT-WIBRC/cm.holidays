@@ -34,12 +34,12 @@ export class PersonController {
           StatusCodes.NOT_FOUND, COMMONS_ERRORS_CODES.NOT_FOUND);
       }
 
-      const isSame: boolean = await Auth.comparePassword(
+      const areTheSame: boolean = await Auth.comparePassword(
         request.body.password,
         person.password
       );
 
-      if (!isSame) {
+      if (!areTheSame) {
         throw  new ApiError(
           StatusCodes.NOT_FOUND,
           COMMONS_ERRORS_CODES.NOT_FOUND
@@ -146,6 +146,47 @@ export class PersonController {
             };
           })
       );
+    })(request, response, next);
+  }
+
+  static async updatePassword(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response<void>> {
+    return await asyncWrapper(async (): Promise<Response<void>> => {
+      const { email } = response.locals.user;
+      const { oldPassword, newPassword } = request.body;
+      const person = await PersonService.findByEmail(email, false);
+      if (!person) {
+        throw  new ApiError(
+          StatusCodes.NOT_FOUND,
+          COMMONS_ERRORS_CODES.NOT_FOUND
+        );
+      }
+
+      let areTheSame: boolean = await Auth.comparePassword(
+        oldPassword, person.password);
+
+      if (!areTheSame) {
+        throw  new ApiError(
+          StatusCodes.NOT_FOUND,
+          COMMONS_ERRORS_CODES.WRONG_PASSWORD
+        );
+      }
+
+      areTheSame = await Auth.comparePassword(newPassword, person.password);
+
+      if (areTheSame) {
+        throw  new ApiError(
+          StatusCodes.CONFLICT,
+          COMMONS_ERRORS_CODES.PASSWORD_ARE_SAME
+        );
+      }
+      person.password = newPassword;
+      await PersonService.update(person);
+
+      return response.sendStatus(StatusCodes.NO_CONTENT);
     })(request, response, next);
   }
 }

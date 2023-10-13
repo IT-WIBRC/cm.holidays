@@ -14,13 +14,15 @@ export class PersonService {
     "createdAt"
   ];
 
-  static async findByEmail(email: string): Promise<Employee | null> {
+  static async findByEmail(
+    email: string,
+    withRole = true): Promise<Employee | null> {
     return this.personManager.findOne({
       where: {
         email: email.toLowerCase()
       },
       relations: {
-        roles: true
+        roles: withRole
       },
       loadEagerRelations: true
     });
@@ -58,5 +60,11 @@ export class PersonService {
         posts: true
       }
     });
+  }
+
+  static async update(employee: Employee): Promise<void> {
+    this.personManager.update({
+      id: employee.id
+    }, employee);
   }
 }

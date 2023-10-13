@@ -3,7 +3,8 @@ import { PersonController } from "../controllers/Person/Person.controller";
 import {
   assertRequiredLoginFieldsAreNotEmpty, emailValidation,
   firstnameValidation,
-  lastnameValidation, passwordValidation, postsValidation, rolesValidation
+  lastnameValidation, newPasswordValidation, oldPasswordValidation,
+  passwordValidation, postsValidation, rolesValidation
 } from "../middlewares/validations/entriesFields";
 import { handleFieldsValidation } from "../middlewares/validations/handler";
 import { AdminController } from "../controllers/Person/Admin.controller";
@@ -14,14 +15,43 @@ import { DEFAULT_TOKEN_KEY, TOKEN_ENCRYPT_ALGO } from "../utils/constants";
 
 const personRouter = Router();
 
-personRouter.post(
-  "/login",
-  assertRequiredLoginFieldsAreNotEmpty,
-  handleFieldsValidation,
-  PersonController.login
-);
-
-personRouter.route("")
+personRouter
+  .post(
+    "/login",
+    assertRequiredLoginFieldsAreNotEmpty,
+    handleFieldsValidation,
+    PersonController.login
+  )
+  .post(
+    "/config/administrator",
+    firstnameValidation,
+    lastnameValidation,
+    passwordValidation,
+    emailValidation,
+    handleFieldsValidation,
+    AdminController.createAdmin
+  )
+  .get(
+    "/:id",
+    expressjwt({
+      secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
+      algorithms: [TOKEN_ENCRYPT_ALGO]
+    }),
+    PersonController.getById
+  )
+  .put(
+    "/update-password",
+    expressjwt({
+      secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
+      algorithms: [TOKEN_ENCRYPT_ALGO]
+    }),
+    oldPasswordValidation,
+    newPasswordValidation,
+    handleFieldsValidation,
+    userHasRoles(["ADMIN", "HUMAN_RESOURCE", "EMPLOYEE"], false),
+    PersonController.updatePassword
+  )
+  .route("")
   .post(
     expressjwt({
       secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
@@ -46,23 +76,5 @@ personRouter.route("")
     PersonController.getAll
   );
 
-personRouter.post(
-  "/config/administrator",
-  firstnameValidation,
-  lastnameValidation,
-  passwordValidation,
-  emailValidation,
-  handleFieldsValidation,
-  AdminController.createAdmin
-);
-
-personRouter.get(
-  "/:id",
-  expressjwt({
-    secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
-    algorithms: [TOKEN_ENCRYPT_ALGO]
-  }),
-  PersonController.getById
-);
 
 export { personRouter };

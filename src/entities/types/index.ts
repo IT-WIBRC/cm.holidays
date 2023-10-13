@@ -6,12 +6,14 @@ type EmployeeForLogin = components["schemas"]["EmployeeDTOForLogin"];
 type EmployeeForUpdate = components["schemas"]["EmployeeDTOForUpdate"];
 type EmployeeType = components["schemas"]["EmployeeDTO"];
 type EmployeeToken = components["schemas"]["EmployeeTokenDTO"];
+type EmployeeUpdatePassword = components["schemas"]["EmployeeDTOForUpdatePassword"];
 
 interface EmployeeDTOForCreation extends EmployeeForCreation {}
 interface EmployeeTokenDTO extends EmployeeToken {}
 interface EmployeeDTO extends EmployeeType {}
 interface EmployeeDTOForLogin extends EmployeeForLogin {}
 interface EmployeeDTOForUpdate extends EmployeeForUpdate {}
+interface EmployeeDTOForUpdatePassword extends EmployeeUpdatePassword {}
 
 //Holiday Request
 type HolidayRequestType = components["schemas"]["HolidayRequestDTO"];
@@ -59,7 +61,9 @@ enum COMMONS_ERRORS_CODES {
   DESCRIPTION_NUMBER_OF_CHARACTERS = "HOLIDAY-3012",
   ALREADY_IN_THAT_STATE = "HOLIDAY-3029",
   FAILED_OPERATION = "HOLIDAY-5001",
-  UNPROCESSABLE_OPERATION = "HOLIDAY-4022"
+  UNPROCESSABLE_OPERATION = "HOLIDAY-4022",
+  PASSWORD_ARE_SAME = "HOLIDAY-3041",
+  WRONG_PASSWORD = "HOLIDAY-3042"
 }
 
 enum EMPLOYEE_ERRORS_CODES {
@@ -129,7 +133,8 @@ export {
   PostDTO,
   RoleDTO,
   SettingDTO,
-  HolidayTypeDTO
+  HolidayTypeDTO,
+  EmployeeDTOForUpdatePassword
 };
 
 // EXPORT ENUM
