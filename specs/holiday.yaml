@@ -229,7 +229,6 @@ paths:
           description: HOLIDAY-3029
         404:
           description: HOLIDAY-3029 | HOLIDAY-3031
-
   /post/{id}:
     get:
       tags:
@@ -428,6 +427,26 @@ paths:
           description: successful operation
         404:
           description: HOLIDAY-4004
+  /employee/update-password:
+    put:
+      tags:
+        - Employee
+      summary: update employee password
+      description: update employee password
+      requestBody:
+        description: Employee object that we need to update the password
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeDTOForUpdatePassword'
+      responses:
+        204:
+          description: successful operation
+        404:
+          description: HOLIDAY-3042
+        409:
+          description: HOLIDAY-3041
 
   /role:
     post:
@@ -1016,6 +1035,14 @@ components:
         customEmailNotification:
           type: string
           description: another email notification chose by the user
+    EmployeeDTOForUpdatePassword:
+      properties:
+        oldPassword:
+          type: string
+          description: old employee password
+        newPassword:
+          type: string
+          description: new employee password to apply
     USER_ROLE:
       type: string
       enum:

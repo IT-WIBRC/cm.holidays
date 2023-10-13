@@ -38,28 +38,37 @@ const emailSchema = {
 };
 const emailValidation = checkSchema(emailSchema);
 
-const passwordValidation = checkSchema({
-  password: {
-    exists: {
-      errorMessage: EMPLOYEE_ERRORS_CODES.PASSWORD_REQUIRED
-    },
-    trim: true,
-    isLength: {
-      errorMessage: EMPLOYEE_ERRORS_CODES.PASSWORD_NUMBER_OF_CHARACTERS,
-      options: {
-        min: 6,
-        max: 10
-      }
-    },
-    matches: {
-      errorMessage:
-        EMPLOYEE_ERRORS_CODES.PASSWORD_FORMAT,
-      options: new RegExp(
-        "(^[\\w.-@]{8,10})",
-        "g"
-      )
+const passwordValidators = {
+  exists: {
+    errorMessage: EMPLOYEE_ERRORS_CODES.PASSWORD_REQUIRED
+  },
+  trim: true,
+  isLength: {
+    errorMessage: EMPLOYEE_ERRORS_CODES.PASSWORD_NUMBER_OF_CHARACTERS,
+    options: {
+      min: 6,
+      max: 10
     }
+  },
+  matches: {
+    errorMessage:
+    EMPLOYEE_ERRORS_CODES.PASSWORD_FORMAT,
+    options: new RegExp(
+      "(^[\\w.-@]{8,10})",
+      "g"
+    )
   }
+};
+const passwordValidation = checkSchema({
+  password: passwordValidators
+});
+
+const oldPasswordValidation = checkSchema({
+  oldPassword: passwordValidators
+});
+
+const newPasswordValidation = checkSchema({
+  newPassword: passwordValidators
 });
 
 const firstnameValidation = checkSchema({
@@ -285,7 +294,9 @@ export {
   nameValidation,
   descriptionValidation,
   rolesValidation,
-  postsValidation
+  postsValidation,
+  oldPasswordValidation,
+  newPasswordValidation
 };
 
 export {
