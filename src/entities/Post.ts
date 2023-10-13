@@ -50,7 +50,9 @@ export class Post implements PostDTO {
     @JoinColumn()
     declare service: Service;
 
-    @ManyToMany(() => Employee, (employee) => employee.posts)
+    @ManyToMany(() => Employee, (employee) => employee.posts, {
+      cascade: true
+    })
     @JoinColumn({ name: "employeeId" })
     @JoinTable()
     declare employee: Employee[];
