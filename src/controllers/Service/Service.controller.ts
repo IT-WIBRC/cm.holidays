@@ -110,9 +110,12 @@ export class ServiceController {
       const { name, description } = request.body;
       const otherServiceWithSameName = await ServiceController
         .getServiceByName(name);
-      if (service.id !== otherServiceWithSameName?.id) {
-        throw new ApiError(StatusCodes.CONFLICT,
-          SERVICE_ERRORS_CODES.ANOTHER_EXIST_WITH_SAME_NAME);
+
+      if (otherServiceWithSameName) {
+        if (service.id !== otherServiceWithSameName?.id) {
+          throw new ApiError(StatusCodes.CONFLICT,
+            SERVICE_ERRORS_CODES.ANOTHER_EXIST_WITH_SAME_NAME);
+        }
       }
 
       service.name = regulariseSpacesFrom(name);

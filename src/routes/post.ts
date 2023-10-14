@@ -27,6 +27,12 @@ postRouter
     userHasRoles(["ADMIN"]),
     PostController.togglePost
   )
+  .put(
+    "/:id",
+    assertPostCreation,
+    handleFieldsValidation,
+    PostController.edit
+  )
   .route("")
   .get(
     userHasRoles(["ADMIN"]),
