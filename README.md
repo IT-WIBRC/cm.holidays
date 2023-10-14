@@ -45,6 +45,8 @@ Allow person in the company to ask for a holiday that the company allow. Further
      - HOLIDAY-3016 : malformed request (service type is missing)
      - HOLIDAY-3030 : service not found
      - HOLIDAY-3032 : service is not active
+     - HOLIDAY-3043 : another service already exist with the same name
+     - HOLIDAY-3044 : service is active and nay be used
 
   5. **POST**
 
