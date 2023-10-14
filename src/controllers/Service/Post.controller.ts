@@ -15,6 +15,13 @@ import {
 } from "../../entities/types";
 
 export class PostController {
+
+  private static async getPostByName(name: string)
+    : Promise<PostDTO | null> {
+    return PostService
+      .findByName(regulariseSpacesFrom(name));
+  }
+
   static async create(
     request: Request,
     response: Response,
@@ -26,8 +33,8 @@ export class PostController {
         description,
         service: { id }
       } = request.body;
-      const existingPost = await PostService
-        .findByName(regulariseSpacesFrom(name));
+      const existingPost = await PostController
+        .getPostByName(regulariseSpacesFrom(name));
 
       if (existingPost) {
         throw new ApiError(StatusCodes.CONFLICT,
@@ -130,6 +137,52 @@ export class PostController {
     return await asyncWrapper(async () => {
       const posts = await PostService.findAll();
       return response.status(StatusCodes.OK).json(posts);
+    })(request, response, next);
+  }
+
+  static async edit(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<string> {
+    return await asyncWrapper(async (): Promise<Response<string>> => {
+      const post = await PostService.findById(request.params.id);
+
+      if (!post) {
+        throw new ApiError(StatusCodes.NOT_FOUND,
+          POST_ERRORS_CODES.NOT_FOUND);
+      }
+      const { name, description, service: { id } } = request.body;
+      const otherPostWithSameName = await PostController
+        .getPostByName(name);
+
+      if (otherPostWithSameName) {
+        if (post.id !== otherPostWithSameName?.id) {
+          throw new ApiError(StatusCodes.CONFLICT,
+            SERVICE_ERRORS_CODES.ANOTHER_EXIST_WITH_SAME_NAME);
+        }
+      }
+
+      if (id) {
+        const service = await CompanyService.findServiceById(id);
+
+        if (!service) {
+          throw new ApiError(StatusCodes.NOT_FOUND,
+            SERVICE_ERRORS_CODES.NOT_FOUND);
+        }
+
+        if (!service.isActive) {
+          throw new ApiError(StatusCodes.CONFLICT,
+            SERVICE_ERRORS_CODES.NOT_ACTIVE);
+        }
+        post.service = service;
+      }
+
+      post.name = regulariseSpacesFrom(name);
+      post.description = regulariseSpacesFrom(description);
+
+      await PostService.update(post);
+      return response.sendStatus(StatusCodes.NO_CONTENT);
     })(request, response, next);
   }
 }

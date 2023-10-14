@@ -60,4 +60,10 @@ export class PostService {
       }
     );
   }
+
+  static async update(post: Post): Promise<void> {
+    this.postManager.update({
+      id: post.id
+    }, post);
+  }
 }
