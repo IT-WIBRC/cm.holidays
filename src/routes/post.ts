@@ -23,9 +23,9 @@ postRouter
     PostController.getPostByServiceId
   )
   .put(
-    "/:id/activate",
+    ["/:id/activate", "/:id/deactivate"],
     userHasRoles(["ADMIN"]),
-    PostController.activePost
+    PostController.togglePost
   )
   .route("")
   .get(
