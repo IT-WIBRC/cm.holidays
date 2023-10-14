@@ -38,7 +38,7 @@ export class PostService {
     return this.postManager.save(post);
   }
 
-  static async activate(post: Post): Promise<void> {
+  static async toggle(post: Post): Promise<void> {
     await this.postManager.update({
       id: post.id
     }, post);

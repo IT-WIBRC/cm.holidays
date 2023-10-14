@@ -79,12 +79,13 @@ export class PostController {
     })(request, response, next);
   }
 
-  static async activePost(request: Request,
+  static async togglePost(request: Request,
     response: Response,
     next: NextFunction): Promise<Response<ServiceDTO>> {
     return await asyncWrapper(async () => {
 
       const { id }  = request.params;
+      const isActivation = request.path.split("/").includes("activate");
 
       const serviceOfPost = await CompanyService.findServiceByPostId(id);
       if (!serviceOfPost) {
@@ -102,13 +103,20 @@ export class PostController {
         throw new ApiError(StatusCodes.NOT_FOUND, POST_ERRORS_CODES.NOT_FOUND);
       }
 
-      if (post.isActive) {
-        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
-          COMMONS_ERRORS_CODES.ALREADY_IN_THAT_STATE);
+      if (isActivation) {
+        if (post.isActive) {
+          throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+            COMMONS_ERRORS_CODES.ALREADY_IN_THAT_STATE);
+        }
+      } else {
+        if (!post.isActive) {
+          throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+            COMMONS_ERRORS_CODES.ALREADY_IN_THAT_STATE);
+        }
       }
 
-      post.isActive = true;
-      await PostService.activate(post);
+      post.isActive = isActivation;
+      await PostService.toggle(post);
 
       return response.sendStatus(StatusCodes.NO_CONTENT);
     })(request, response, next);
