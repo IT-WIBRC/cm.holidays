@@ -22,6 +22,13 @@ serviceRouter
     userHasRoles(["ADMIN"]),
     ServiceController.toggleService
   )
+  .put(
+    "/:id",
+    nameValidation,
+    descriptionValidation,
+    handleFieldsValidation,
+    ServiceController.edit
+  )
   .route("")
   .post(
     userHasRoles(["ADMIN"]),

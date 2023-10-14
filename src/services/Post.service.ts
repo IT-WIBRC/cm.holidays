@@ -14,8 +14,14 @@ export class PostService {
   }
 
   static async findById(id: string): Promise<Post | null> {
-    return this.postManager.findOneBy({
-      id
+    return this.postManager.findOne({
+      select: ["id", "description", "name", "isActive", "service"],
+      where: {
+        id
+      },
+      relations: {
+        service: true
+      }
     });
   }
 
@@ -45,6 +51,13 @@ export class PostService {
   }
 
   static async findAll(): Promise<Post[]> {
-    return this.postManager.find();
+    return this.postManager.find(
+      {
+        select: ["id", "description", "name", "isActive", "service"],
+        relations: {
+          service: true
+        }
+      }
+    );
   }
 }

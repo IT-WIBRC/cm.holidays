@@ -50,4 +50,10 @@ export class CompanyService {
       }
     });
   }
+
+  static async update(service: Service): Promise<void> {
+    this.serviceManager.update({
+      id: service.id
+    }, service);
+  }
 }
