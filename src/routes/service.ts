@@ -18,9 +18,9 @@ serviceRouter
     })
   )
   .put(
-    "/:id/activate",
+    ["/:id/activate", "/:id/deactivate"],
     userHasRoles(["ADMIN"]),
-    ServiceController.activeService
+    ServiceController.toggleService
   )
   .route("")
   .post(

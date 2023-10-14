@@ -1,52 +1,13 @@
-import express, { NextFunction, Request, Response } from "express";
 import { AppDataSource } from "./data-source";
-import { holidayRequestRouter, holidayTypeRouter, personRouter, roleRouter, serviceRouter } from "./routes";
-import helmet from "helmet";
-import compression from "compression";
-import cors from "cors";
-import { Security } from "./middlewares/security";
-import { NotFound, ErrorHandler } from "./middlewares/errors/Api";
 import { initEnv } from "../configEnv";
-import { postRouter } from "./routes/post";
+import { app } from "./main";
 
 initEnv();
 
-const initApp = async (): Promise<unknown> => {
+const initApp = async (): Promise<void> => {
   try {
     await AppDataSource.initialize();
-
-    const app = express();
-    app
-      .use(compression())
-      .use(helmet({
-        xssFilter: true,
-        xContentTypeOptions: true
-      }))
-      .use(Security.xstAttackBlocker)
-      .use(
-        cors({
-          origin: process.env.API_URL
-        })
-      )
-      .use(express.urlencoded({ extended: true }))
-      .use(express.json());
-
-    app
-      .all("api/v1")
-      .use("/employee", personRouter)
-      .use("/service", serviceRouter)
-      .use("/post", postRouter)
-      .use("/role", roleRouter)
-      .use("/holidayType", holidayTypeRouter)
-      .use("/holidayRequest", holidayRequestRouter);
-
-    app.use((request: Request, response: Response, next: NextFunction) =>
-      next(new NotFound(`Requested path ${request.path} not found`))
-    );
-
-    app.use(ErrorHandler.handle());
-
-    return app.listen(process.env.PORT);
+    app.listen(process.env.PORT);
   } catch (error: unknown) {
     console.error(error);
   }
