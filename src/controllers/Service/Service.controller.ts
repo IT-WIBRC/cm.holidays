@@ -56,24 +56,33 @@ export class ServiceController {
     })(request, response, next);
   }
 
-  static async activeService(request: Request,
+  static async toggleService(request: Request,
     response: Response,
     next: NextFunction): Promise<Response<void>> {
     return await asyncWrapper(async () => {
 
+      const isActivation = request.path.split("/").includes("activate");
       const service = await CompanyService.findServiceById(request.params.id);
       if (!service) {
         throw new ApiError(StatusCodes.NOT_FOUND,
           COMMONS_ERRORS_CODES.NOT_FOUND);
       }
 
-      if (service.isActive) {
-        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
-          COMMONS_ERRORS_CODES.ALREADY_IN_THAT_STATE);
+      if (isActivation) {
+        if (service.isActive) {
+          throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+            COMMONS_ERRORS_CODES.ALREADY_IN_THAT_STATE);
+        }
+      } else {
+        if (!service.isActive) {
+          throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+            COMMONS_ERRORS_CODES.ALREADY_IN_THAT_STATE);
+        }
       }
 
-      service.isActive = true;
-      await CompanyService.activate(service);
+
+      service.isActive = isActivation;
+      await CompanyService.toggle(service);
 
       return response.sendStatus(StatusCodes.NO_CONTENT);
     })(request, response, next);
