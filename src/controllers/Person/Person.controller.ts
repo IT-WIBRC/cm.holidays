@@ -1,8 +1,11 @@
 import {
+  COMMONS_ERRORS_CODES,
+  EmployeeDTO,
   EmployeeDTOForCreation,
-  EmployeeTokenDTO,
   EmployeeDTOForLogin,
-  EmployeeDTO
+  EmployeeTokenDTO,
+  ROLE_ERRORS_CODES,
+  USER_ROLE
 } from "../../entities/types";
 import { NextFunction, Request, Response } from "express";
 import { PersonService } from "../../services/Person.service";
@@ -27,18 +30,19 @@ export class PersonController {
         .findByEmail(regulariseSpacesFrom(request.body.email, ""));
 
       if (!person) {
-        throw new ApiError(StatusCodes.NOT_FOUND, "Person not found");
+        throw new ApiError(
+          StatusCodes.NOT_FOUND, COMMONS_ERRORS_CODES.NOT_FOUND);
       }
 
-      const isSame: boolean = await Auth.comparePassword(
+      const areTheSame: boolean = await Auth.comparePassword(
         request.body.password,
         person.password
       );
 
-      if (!isSame) {
+      if (!areTheSame) {
         throw  new ApiError(
-          StatusCodes.BAD_REQUEST,
-          "Wrong information provided"
+          StatusCodes.NOT_FOUND,
+          COMMONS_ERRORS_CODES.NOT_FOUND
         );
       }
 
@@ -58,11 +62,8 @@ export class PersonController {
       const person = await PersonService.findByEmail(email);
 
       if (person) {
-        throw new ApiError(StatusCodes.CONFLICT, "Person already exist");
-      }
-
-      if (!roles.length) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Request has been malformed");
+        throw new ApiError(StatusCodes.CONFLICT,
+          COMMONS_ERRORS_CODES.CONFLICTS);
       }
 
       const existingRole: Role[] = [];
@@ -72,7 +73,9 @@ export class PersonController {
       }
 
       if (existingRole.length !== roles.length) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Request has been malformed");
+        throw new ApiError(
+          StatusCodes.NOT_FOUND,
+          ROLE_ERRORS_CODES.NOT_FOUND);
       }
 
       const setting = await SettingService.create({
@@ -89,7 +92,8 @@ export class PersonController {
 
       newUser = await PersonService.create(newUser);
       if (!newUser) {
-        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "User has failed to be create");
+        throw new ApiError(StatusCodes.CONFLICT,
+          COMMONS_ERRORS_CODES.FAILED_OPERATION);
       }
 
       return response.status(StatusCodes.CREATED).json({
@@ -106,17 +110,83 @@ export class PersonController {
   ) : Promise<Response<EmployeeDTO>> {
     return await asyncWrapper(
       async (): Promise<Response<EmployeeDTOForCreation>> => {
-        const { id } = request.params;
-        if (!id) {
-          throw new ApiError(StatusCodes.BAD_REQUEST, "HOLIDAY-EMPLOYEE-4009");
-        }
-
-        const person = await PersonService.findUserById(id);
+        const person = await PersonService.findUserById(request.params.id);
         if (!person) {
-          throw new ApiError(StatusCodes.NOT_FOUND, "HOLIDAY-EMPLOYEE-4004");
+          throw new ApiError(
+            StatusCodes.NOT_FOUND,
+            COMMONS_ERRORS_CODES.NOT_FOUND
+          );
         }
 
         return response.status(StatusCodes.OK).json(person);
       })(request, response, next);
+  }
+
+  static async getAll(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response<EmployeeDTO[]>> {
+    return await asyncWrapper(async (): Promise<Response<EmployeeDTO>> => {
+
+      const { isAdmin } = response.locals.roles;
+      const persons = await PersonService.findAll();
+
+      if (isAdmin) {
+        return response.status(StatusCodes.OK).json(persons);
+      }
+      return response.status(StatusCodes.OK).json(
+        persons
+          .filter(person =>
+            !person.roles.map((role) => role.type).includes(USER_ROLE.ADMIN))
+          .map((person) => {
+            return {
+              ...person,
+              roles: undefined
+            };
+          })
+      );
+    })(request, response, next);
+  }
+
+  static async updatePassword(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<Response<void>> {
+    return await asyncWrapper(async (): Promise<Response<void>> => {
+      const { email } = response.locals.user;
+      const { oldPassword, newPassword } = request.body;
+      const person = await PersonService.findByEmail(email, false);
+      if (!person) {
+        throw  new ApiError(
+          StatusCodes.NOT_FOUND,
+          COMMONS_ERRORS_CODES.NOT_FOUND
+        );
+      }
+
+      let areTheSame: boolean = await Auth.comparePassword(
+        oldPassword, person.password);
+
+      if (!areTheSame) {
+        throw  new ApiError(
+          StatusCodes.NOT_FOUND,
+          COMMONS_ERRORS_CODES.WRONG_PASSWORD
+        );
+      }
+
+      areTheSame = await Auth.comparePassword(newPassword, person.password);
+
+      if (areTheSame) {
+        throw  new ApiError(
+          StatusCodes.CONFLICT,
+          COMMONS_ERRORS_CODES.PASSWORD_ARE_SAME
+        );
+      }
+      person.password = newPassword;
+      await PersonService.update(person);
+
+      return response.sendStatus(StatusCodes.NO_CONTENT);
+    })(request, response, next);
   }
 }

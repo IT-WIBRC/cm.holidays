@@ -37,7 +37,7 @@ export class CompanyService {
     });
   }
 
-  static async activate(service: Service): Promise<void> {
+  static async toggle(service: Service): Promise<void> {
     await this.serviceManager.update({
       id: service.id
     }, service);
@@ -49,5 +49,11 @@ export class CompanyService {
         id
       }
     });
+  }
+
+  static async update(service: Service): Promise<void> {
+    this.serviceManager.update({
+      id: service.id
+    }, service);
   }
 }

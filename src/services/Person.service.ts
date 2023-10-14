@@ -1,18 +1,28 @@
 import { AppDataSource } from "../data-source";
 import { Employee } from "../entities/Employee";
-import { Repository } from "typeorm";
+import { FindOptionsSelect, Repository } from "typeorm";
 
 export class PersonService {
   private static personManager: Repository<Employee> =
     AppDataSource.getRepository(Employee);
 
-  static async findByEmail(email: string): Promise<Employee | null> {
+  private static extractFields: (keyof Employee) [] = [
+    "id",
+    "email",
+    "lastName",
+    "firstname",
+    "createdAt"
+  ];
+
+  static async findByEmail(
+    email: string,
+    withRole = true): Promise<Employee | null> {
     return this.personManager.findOne({
       where: {
         email: email.toLowerCase()
       },
       relations: {
-        roles: true
+        roles: withRole
       },
       loadEagerRelations: true
     });
@@ -27,17 +37,7 @@ export class PersonService {
 
   static async findUserById(userId: string): Promise<Employee | null> {
     return this.personManager.findOne({
-      select: [
-        "id",
-        "email",
-        "roles",
-        "lastName",
-        "firstname",
-        "createdAt",
-        "holidays",
-        "posts",
-        "setting"
-      ],
+      select: [...this.extractFields, "holidays", "posts", "roles"],
       where: {
         id: userId
       },
@@ -50,5 +50,21 @@ export class PersonService {
 
   static async create(person: Employee): Promise<Employee | null> {
     return this.personManager.save(person);
+  }
+
+  static async findAll(): Promise<Employee[]> {
+    return this.personManager.find({
+      select: this.extractFields as FindOptionsSelect<Employee>,
+      relations: {
+        roles: true,
+        posts: true
+      }
+    });
+  }
+
+  static async update(employee: Employee): Promise<void> {
+    this.personManager.update({
+      id: employee.id
+    }, employee);
   }
 }

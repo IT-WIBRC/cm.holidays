@@ -6,9 +6,22 @@ import { StatusCodes } from "http-status-codes";
 import { CompanyService } from "../../services/Company.service";
 import { Post } from "../../entities/Post";
 import { regulariseSpacesFrom } from "../../utils/commons";
-import { PostDTO, ServiceDTO } from "../../entities/types";
+import {
+  COMMONS_ERRORS_CODES,
+  POST_ERRORS_CODES,
+  PostDTO,
+  SERVICE_ERRORS_CODES,
+  ServiceDTO
+} from "../../entities/types";
 
 export class PostController {
+
+  private static async getPostByName(name: string)
+    : Promise<PostDTO | null> {
+    return PostService
+      .findByName(regulariseSpacesFrom(name));
+  }
+
   static async create(
     request: Request,
     response: Response,
@@ -20,17 +33,19 @@ export class PostController {
         description,
         service: { id }
       } = request.body;
-      const existingPost = await PostService
-        .findByName(regulariseSpacesFrom(name));
+      const existingPost = await PostController
+        .getPostByName(regulariseSpacesFrom(name));
 
       if (existingPost) {
-        throw new ApiError(StatusCodes.CONFLICT, "Post already exist");
+        throw new ApiError(StatusCodes.CONFLICT,
+          COMMONS_ERRORS_CODES.CONFLICTS);
       }
 
       const serviceOfPost = await CompanyService.findServiceById(id);
 
       if (!serviceOfPost) {
-        throw new ApiError(StatusCodes.CONFLICT, "Service does not exist");
+        throw new ApiError(StatusCodes.NOT_FOUND,
+          SERVICE_ERRORS_CODES.NOT_FOUND);
       }
 
       let newPost = new Post();
@@ -42,9 +57,7 @@ export class PostController {
 
       newPost = await PostService.create(newPost);
 
-      response.status(StatusCodes.CREATED).json({
-        id: newPost.id
-      });
+      response.status(StatusCodes.CREATED).json(newPost.id);
 
     })(request, response, next);
   }
@@ -55,15 +68,11 @@ export class PostController {
     next: NextFunction
   ): Promise<string> {
     return await asyncWrapper(async () => {
-      const { id } = request.params;
-      if (!id) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Service id is missing");
-      }
-
-      const service = await CompanyService.findServiceById(id);
+      const service = await CompanyService.findServiceById(request.params.id);
 
       if (!service) {
-        throw new ApiError(StatusCodes.NOT_FOUND, "Service not found");
+        throw new ApiError(StatusCodes.NOT_FOUND,
+          SERVICE_ERRORS_CODES.NOT_FOUND);
       }
 
       const { isAdmin, isHumanResource  } = response.locals.roles;
@@ -77,37 +86,44 @@ export class PostController {
     })(request, response, next);
   }
 
-  static async activePost(request: Request,
+  static async togglePost(request: Request,
     response: Response,
     next: NextFunction): Promise<Response<ServiceDTO>> {
     return await asyncWrapper(async () => {
 
       const { id }  = request.params;
-
-      if (!id) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "No id found");
-      }
+      const isActivation = request.path.split("/").includes("activate");
 
       const serviceOfPost = await CompanyService.findServiceByPostId(id);
       if (!serviceOfPost) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "There is no service for this post");
+        throw new ApiError(StatusCodes.NOT_FOUND,
+          SERVICE_ERRORS_CODES.NOT_FOUND);
       }
 
       if (!serviceOfPost.isActive) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "The service of this post is not active");
+        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+          SERVICE_ERRORS_CODES.NOT_ACTIVE);
       }
 
       const post = await PostService.findById(id);
       if (!post) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Post not found");
+        throw new ApiError(StatusCodes.NOT_FOUND, POST_ERRORS_CODES.NOT_FOUND);
       }
 
-      if (post.isActive) {
-        throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, "Post is already active");
+      if (isActivation) {
+        if (post.isActive) {
+          throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+            COMMONS_ERRORS_CODES.ALREADY_IN_THAT_STATE);
+        }
+      } else {
+        if (!post.isActive) {
+          throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,
+            COMMONS_ERRORS_CODES.ALREADY_IN_THAT_STATE);
+        }
       }
 
-      post.isActive = true;
-      await PostService.activate(post);
+      post.isActive = isActivation;
+      await PostService.toggle(post);
 
       return response.sendStatus(StatusCodes.NO_CONTENT);
     })(request, response, next);
@@ -121,6 +137,52 @@ export class PostController {
     return await asyncWrapper(async () => {
       const posts = await PostService.findAll();
       return response.status(StatusCodes.OK).json(posts);
+    })(request, response, next);
+  }
+
+  static async edit(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<string> {
+    return await asyncWrapper(async (): Promise<Response<string>> => {
+      const post = await PostService.findById(request.params.id);
+
+      if (!post) {
+        throw new ApiError(StatusCodes.NOT_FOUND,
+          POST_ERRORS_CODES.NOT_FOUND);
+      }
+      const { name, description, service: { id } } = request.body;
+      const otherPostWithSameName = await PostController
+        .getPostByName(name);
+
+      if (otherPostWithSameName) {
+        if (post.id !== otherPostWithSameName?.id) {
+          throw new ApiError(StatusCodes.CONFLICT,
+            SERVICE_ERRORS_CODES.ANOTHER_EXIST_WITH_SAME_NAME);
+        }
+      }
+
+      if (id) {
+        const service = await CompanyService.findServiceById(id);
+
+        if (!service) {
+          throw new ApiError(StatusCodes.NOT_FOUND,
+            SERVICE_ERRORS_CODES.NOT_FOUND);
+        }
+
+        if (!service.isActive) {
+          throw new ApiError(StatusCodes.CONFLICT,
+            SERVICE_ERRORS_CODES.NOT_ACTIVE);
+        }
+        post.service = service;
+      }
+
+      post.name = regulariseSpacesFrom(name);
+      post.description = regulariseSpacesFrom(description);
+
+      await PostService.update(post);
+      return response.sendStatus(StatusCodes.NO_CONTENT);
     })(request, response, next);
   }
 }

@@ -10,26 +10,22 @@ import { HolidayTypeController } from "../controllers/HolidayType/HolidayType.co
 initEnv();
 const holidayTypeRouter = Router();
 
-holidayTypeRouter.post(
-  "/add",
-  expressjwt({
-    secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
-    algorithms: [TOKEN_ENCRYPT_ALGO]
-  }),
-  userHasRoles(["ADMIN", "HUMAN_RESOURCE"], false),
-  nameValidation,
-  handleFieldsValidation,
-  HolidayTypeController.create
-);
-
-holidayTypeRouter.get(
-  "/all",
-  expressjwt({
-    secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
-    algorithms: [TOKEN_ENCRYPT_ALGO]
-  }),
-  userHasRoles(["ADMIN", "HUMAN_RESOURCE", "EMPLOYEE"], false),
-  HolidayTypeController.getAll
-);
+holidayTypeRouter
+  .use(
+    expressjwt({
+      secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
+      algorithms: [TOKEN_ENCRYPT_ALGO]
+    })
+  )
+  .route("")
+  .post(
+    userHasRoles(["ADMIN", "HUMAN_RESOURCE"], false),
+    nameValidation,
+    handleFieldsValidation,
+    HolidayTypeController.create
+  ).get(
+    userHasRoles(["ADMIN", "HUMAN_RESOURCE", "EMPLOYEE"], false),
+    HolidayTypeController.getAll
+  );
 
 export { holidayTypeRouter };
