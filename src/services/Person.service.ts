@@ -43,7 +43,8 @@ export class PersonService {
       },
       relations: {
         holidays: true,
-        posts: true
+        posts: true,
+        roles: true
       }
     });
   }
