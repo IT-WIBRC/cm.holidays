@@ -96,3 +96,4 @@ Allow person in the company to ask for a holiday that the company allow. Further
  - Use `ValueObject` [valueObject](https://khalilstemmler.com/articles/typescript-value-object/)
  - Use `DTO` in deep [DTO](https://khalilstemmler.com/articles/enterprise-typescript-nodejs/use-dtos-to-enforce-a-layer-of-indirection/)
  - General link there [khalilstemmler](https://khalilstemmler.com/articles/categories/enterprise-node-type-script)
+ - Make the holiday requests and user pagination 
