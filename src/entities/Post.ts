@@ -2,8 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn, JoinTable, ManyToMany,
-  OneToOne,
+  JoinColumn, JoinTable, ManyToMany, ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from "typeorm";
@@ -46,8 +45,7 @@ export class Post implements PostDTO {
     @UpdateDateColumn({ name: "updated_at" })
     declare updatedAt?: string;
 
-    @OneToOne(() => Service)
-    @JoinColumn()
+    @ManyToOne(() => Service, (service) => service.posts)
     declare service: Service;
 
     @ManyToMany(() => Employee, (employee) => employee.posts, {
