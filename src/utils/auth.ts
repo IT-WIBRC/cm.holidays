@@ -18,7 +18,7 @@ export class Auth {
     return compare(plainTextPassword, passwordHashed);
   }
 
-  static generateToken (employee: EmployeeDTO, time = "2h"): string {
+  static generateToken (employee: EmployeeDTO, time = "4h"): string {
     const {
       id,
       firstname,
