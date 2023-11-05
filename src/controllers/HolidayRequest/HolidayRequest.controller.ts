@@ -272,4 +272,33 @@ export class HolidayRequestController {
       response.sendStatus(StatusCodes.NO_CONTENT);
     })(request, response, next);
   }
+
+  static async getById(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): Promise<void> {
+    return await asyncWrapper(async ():
+    Promise<Response<HolidayRequestDTO>> => {
+      const { id: holidayRequestId } = request.params;
+      const holidayRequest: HolidayRequest | null =
+        await HolidayRequestService.findById(holidayRequestId);
+      if (!holidayRequest) {
+        throw new ApiError(
+          StatusCodes.NOT_FOUND,
+          COMMONS_ERRORS_CODES.NOT_FOUND
+        );
+      }
+      const employee = holidayRequest.employee;
+      return response.status(StatusCodes.OK).json({
+        ...holidayRequest,
+        employee: {
+          ...employee,
+          password: undefined,
+          createdAt: undefined,
+          updatedAt: undefined
+        }
+      });
+    })(request, response, next);
+  }
 }
