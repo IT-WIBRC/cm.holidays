@@ -13,6 +13,9 @@ export class HolidayRequestService {
         employee: {
           id: userId
         }
+      },
+      relations: {
+        type: true
       }
     });
   }

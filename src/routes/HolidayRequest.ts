@@ -11,6 +11,13 @@ initEnv();
 const holidayRequestRouter = Router();
 
 holidayRequestRouter
+  .use(
+    expressjwt({
+      secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
+      algorithms: [TOKEN_ENCRYPT_ALGO]
+    }),
+    userHasRoles(["ADMIN", "EMPLOYEE", "HUMAN_RESOURCE"], false)
+  )
   .put(
     "/:id/status/:status",
     HolidayRequestController.updateStatus
@@ -19,12 +26,9 @@ holidayRequestRouter
     "/:id",
     HolidayRequestController.update
   )
-  .use(
-    expressjwt({
-      secret: process.env.TOKEN_KEY ?? DEFAULT_TOKEN_KEY,
-      algorithms: [TOKEN_ENCRYPT_ALGO]
-    }),
-    userHasRoles(["ADMIN", "EMPLOYEE", "HUMAN_RESOURCE"], false)
+  .get(
+    "/:id",
+    HolidayRequestController.getById
   )
   .route("")
   .get(HolidayRequestController.getAll)
