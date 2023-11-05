@@ -994,6 +994,10 @@ components:
           type: string
           format: date-time
           description: user updating date
+        createdAt:
+          type: string
+          format: date-time
+          description: holiday request creation date
         type:
           $ref: '#/components/schemas/HolidayTypeDTO'
         status:
