@@ -4,8 +4,8 @@
   "description": "Allow person in the company to ask for a holiday that the company allow. Also to the responsible to validate this or refuse.",
   "main": "index.js",
   "scripts": {
-    "prerequisite": "npm run openapi-generate && npm run migration:generate | npm run migration:run",
-    "prerequisite:prod": "rimraf ./src/migrations | npm run openapi-generate && npm run migration:generate:prod | npm run migration:run:prod",
+    "prerequisite": "npm run openapi-generate && (npm run migration:generate | npm run migration:run)",
+    "prerequisite:prod": "(rimraf ./src/migrations | npm run openapi-generate) && (npm run migration:generate:prod | npm run migration:run:prod)",
     "dev": "cross-env NODE_ENV=development nodemon --exec ts-node ./src/index.ts",
     "prebuild:prod": "rimraf ./dist | npm ci && cd src && npm run prerequisite:prod",
     "build:prod": "cross-env NODE_ENV=production npx tsc",

@@ -1,7 +1,8 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Employee } from "./Employee";
 import { HolidayRequestDTO, HolidayTypeDTO, HolidayStatusDTO  } from "./types";
 import { HolidayType } from "./HolidayType";
+import dayjs from "dayjs";
 
 @Entity({
   name: "t_holidayRequest"
@@ -52,4 +53,10 @@ export class HolidayRequest implements HolidayRequestDTO {
 
     @ManyToOne(() => HolidayType, (holiday) => holiday.holidaysRequests)
     declare type: HolidayTypeDTO;
+
+  @CreateDateColumn({ 
+    name: "createdAt",
+    default: dayjs().toISOString()
+  })
+    declare createdAt?: string;
 }
